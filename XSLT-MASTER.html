@@ -3,8 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans">
-<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vollkorn:wght@500&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@500&display=swap');
+</style> 
+<style type="text/css">
+
+body{
+padding:20px;	
+}
+
+h1, h2, h3, h4{
+font-family: 'Vollkorn', serif;
+font-weight:500;
+
+}
+
+h1{
+font-size:2.8em;
+border-bottom: 3px solid #FFC300;
+}
+
+div > h1{
+padding:0;	
+}
+
+h2{
+font-size:1.8em;
+font-weight:400;	
+}
+
+h3{
+font-size:1.6em;
+font-weight:400;	
+}
+
+h4{
+font-size:1.5em;
+font-weight:400;	
+}
+
+p, a{
+font-family: Arial, Helvetica, sans-serif;
+font-size:1.0em;
+}
+</style>
 <title>Using in-browser XSLT and XPath in Javascript and PHP in the 2020's</title>
 </head>
 <body>
@@ -20,7 +65,6 @@
 <h2 id="context">Context</h2>
 
 <p>I encountered basic XSLT at University during a MA Digital Humanities programme. Ten years plus later, while my memory of the programme has faded, the XSLT course of the programme really interested me and I really enjoyed learning XSLT. Sometimes you simpy enjoy learning something for learning's sake. The course was only a summary look at XSLT and how it could be used from the perspective of basic humanities texts. I decided to start this page of revised learning, how to's and tips in using XSLT and XPath with Javascript and PHP. Much of this page is written for my own benefit and is intended as a note-form, but it is shared in order that it might be useful to others. There are many tutorials in how to use XSLT and XPath on the web but the focus is really how can XSLT be used within the browser in the 2020's. I'm also going to show how you can use XSLT and XPath in a website context and with newer website technology, Ajax (maybe not so new), Fetch API, FileReader API, Drag and Drop API.</p>
-
 <p>XSL is a XML-based stylesheet language to present and extract fragments of XML documents. XSLT is XSL with Transformation ability (i.e XSL + T = XSLT). XSLT is generally used to extract and transform fragements of one XML document into another XML vocabularly or to pick out selected context to make a HTML output.</p>
 
 <p>The original XSLT specification is now over 20 years old, however XSLT is still a very relevent technology and it is worthwhile being reflective on how some aspects of web technology can make a 'resurgance' - the humble .gif image format has become relevent since the dawn of social media and internet memes, Javascript was also once considered a 'toy' language in a browser, now it has developed into one of the top programming languages to learn and is used for both simple personal websites and large-scale websites with millions of users. It is maybe optimistic to think that XSLT, especially XSLT within the browser, will see a resurgence in the web of the 2020's since it's general use is niche and is most applicable to XML files, but you never know - sometimes technology devites away from the makers intentions to fulfill a modern requirement.</p>
@@ -41,11 +85,10 @@
 
 <p>You can use XSTL also client-side within a supported web browser and by using Javascript - this is not fully guaranteed to work on every browser, using a web server or server side via a scripting language like PHP is the better idea. Using XSLT with both Javascript and PHP is the key focus of this document.</p>
 
-<p>When using XSLT in web-browsers it is sensible to assume XSLT 1.0 as a minimum. XSLT 1.0 will give lots of basic functionality for relatively simple XSLT transformations - but you won't be able to use any features in XSLT 2.0 or 3.0.</p>
+<p>When using XSLT in web-browsers it is sensible to assume XSLT 1.0 as a minimum. Current browsers support XSLT 1.0 with no clear plan to support higher features. XSLT 1.0 will give lots of basic functionality for relatively simple XSLT transformations - but you won't be able to use any features in XSLT 2.0 or 3.0.</p>
 
-<p>Some interesting XML files that can be used to play with XSLT can be found via the <a href="http://www.perseus.tufts.edu" title="Perseus Digital Library">Perseus Digital Library website</a>:
-e.g. there is a example of the text of
-<a href="http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126" title="Perseus - The Histories, Herodotus">The Histories by Herodotus</a>.
+<p>Some interesting Humanities XML files that can be used to experiment with XSLT can be found via the <a href="http://www.perseus.tufts.edu" title="Perseus Digital Library">Perseus Digital Library website</a>. For this text I am going to be using a extract from <a href="http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126" title="Perseus - The Histories, Herodotus">The Histories by Herodotus</a>. Perseus makes this text available under a <a href="http://creativecommons.org/licenses/by-sa/3.0/us/" title="Creative Commons &mdash; Attribution-ShareAlike 3.0 United States
+  &mdash; CC BY-SA 3.0 US">Creative Commons Attribution-ShareAlike 3.0 United States License</a> 
 </p>
 
 <h2>Example XSL and XML</h2>
@@ -54,7 +97,7 @@ e.g. there is a example of the text of
 
 <h3>XML document (example.xml)</h3>
 <p>A extract from the Perseus' Digital Library <a href="http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126" title="Perseus - The Histories, Herodotus">The Histories, Herodotus</a> as mentioned above.</p>
-
+<pre>
 <code>
 &lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;?xml-stylesheet type="text/xsl" href="example.xsl"?&gt;
@@ -66,6 +109,7 @@ e.g. there is a example of the text of
 &lt;milestone n="3" unit="section" /&gt;For &lt;name type="pers"&gt;Midas&lt;/name&gt; too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of &lt;name type="pers"&gt;Gyges&lt;/name&gt;. This gold and the silver offered by &lt;name type="pers"&gt;Gyges&lt;/name&gt; is called by the &lt;name type="ethnic"&gt;Delphians&lt;/name&gt; “&lt;name type="ethnic"&gt;Gygian&lt;/name&gt;” after its dedicator.
 &lt;/extract&gt;
 </code>
+</pre>
 
 <h3>XSLT document (example.xsl)</h3>
 <p>This stylesheet outputs all the text content from the associated XML document between the HTML <code>&lt;body&gt;</code> tags. As a double check that a transformation is being made, I have included a template statement to match instances of <code>note</code> encountered in the XML document and style the text content italic.</p>
