@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>XSLT</title>
+<script src="jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div id="example">
+</div>
+
+<script type="text/javascript">
+
+$(function() {
+
+$.get("Example9b-XSLT.php",
+function(data) {
+    $("#example").append(data);
+	console.log(data);
+});
+
+});
+
+/*
+$.ajax({
+    type: "GET",
+    url: "Example9a-XSLT.php",
+    dataType: "text",
+    success: function (data) {
+	    $("#example").append(data);
+    }
+});
+*/
+/*
+let parser = new DOMParser();
+//XSLT stylesheet
+
+fetch("Example9a-XSLT.php").then(function(response){
+  // Do stuff with the response
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       $("#example").append(data);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+
+
+
+});
+*/
+</script>
+
+
+</body>
+</html>

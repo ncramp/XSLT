@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+
+<div id="example"></div>
+
+<script type="text/javascript">
+
+(function(){
+
+if (!('XSLTProcessor' in window)) {
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+let xsltProcessor = new XSLTProcessor();
+let xslDoc;
+let xmlDoc;
+
+let xslRequest = new XMLHttpRequest();
+
+//true as third parameter indicates asynchronous request 
+xslRequest.open("GET", "data/example.xsl", true);
+xslRequest.addEventListener("load", function() {
+if(xslRequest.readyState == 4){
+	if (xslRequest.status == 200){
+		xslDoc = xslRequest.responseXML;
+		xsltProcessor.importStylesheet(xslDoc);
+	}
+}
+});
+
+xslRequest.send(null);
+
+// load the XML file
+let xmlRequest = new XMLHttpRequest();
+
+//true as third parameter indicates asynchronous request 
+xmlRequest.open("GET", "data/example.xml", true);
+xmlRequest.addEventListener("load", function() {
+if(xmlRequest.readyState == 4){
+	if (xmlRequest.status == 200){
+		xmlDoc = xmlRequest.responseXML;
+		var fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+		document.getElementById("example").appendChild(fragment);
+	}
+}
+});
+xmlRequest.send(null);
+
+})();
+
+</script>
+</body>
+</html>

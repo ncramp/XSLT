@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+	
+<!--XML file-->
+<label>XML file</label>
+<input type="file" id="xmlfileload">
+
+<div id="output"></div>
+
+<script type="text/javascript">
+	
+(function(){	
+	
+function documentLoaded(){
+	
+if(!('DOMParser' in window)){
+	console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+/* XSLTProcessor is not needed in this example! */
+//const xsltProcessor = new XSLTProcessor();
+
+const parser = new DOMParser();
+
+const output = document.getElementById("output");
+
+//text/xml
+const xmlfile = document.getElementById("xmlfileload");
+xmlfile.addEventListener("change", function(){
+	
+	    const file = this.files[0];
+		
+		if(file.type !== "text/xml"){
+				console.log("file is not an XML file");
+				return;
+		}
+		
+		const reader = new FileReader();
+		reader.readAsText(file);
+		
+		//load
+		reader.addEventListener("load", function(){
+			
+			/* we don't need XSLTProcessor if the xml document links to the xsl file! 
+			i.e <?xml-stylesheet type="text/xsl" href="example.xsl"?>
+			*/ 
+			
+			const xml = parser.parseFromString(reader.result, "application/xml");
+			output.appendChild(xml.documentElement);
+		}, false);
+		
+		//error
+		reader.addEventListener("error", function(){
+			console.log("error");
+		}, false);
+	
+}, false);
+
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+</script>
+</body>
+</html>

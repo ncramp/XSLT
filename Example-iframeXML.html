@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+
+<iframe id="xslt-iframe" src="data/examplexsl.xml" width="800" height="300">
+<p>iframe is not supported</p>
+</iframe>
+
+<pre>
+<code id="output">
+
+</code>
+</pre>
+
+<script type="text/javascript">
+
+(function(){
+
+function documentLoaded(){
+
+	if(!('XMLSerializer' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+	}
+
+	//iframe
+	console.log("iframe");
+	serializeFromElement("xslt-iframe");
+}
+
+function serializeFromElement(value){
+	
+	//get the iframe
+	let xslt = document.getElementById(value);
+	
+	//get the output location
+	const output = document.getElementById("output");
+	
+	//getting the document
+	let xsltDoc = xslt.contentDocument.documentElement;
+	
+	//serialize the XML to a string
+	let s = new XMLSerializer();
+	let str = null;
+	try{
+ 		str = s.serializeToString(xsltDoc);
+ 		output.textContent = str;
+	}catch(error){
+		console.log(error);
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+</script>
+</body>
+</html>

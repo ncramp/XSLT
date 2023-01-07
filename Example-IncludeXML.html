@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+<!--XML-->
+<div id="xml" style="display:none">
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="example.xsl"?>
+<!-- Text provided by Perseus Digital Library, with funding from The Annenberg CPB/Project. Original version available for viewing and download at http://www.perseus.tufts.edu/hopper/. -->
+<extract>
+<milestone n="1" unit="section" />
+<milestone unit="para" />Thus the <name type="pers">Mermnadae</name> robbed the <name type="pers">Heraclidae</name> of the sovereignty and took it for themselves. Having gotten it, <name type="pers">Gyges</name> sent many offerings to <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>: there are very many silver offerings of his there; and besides the silver, he dedicated a hoard of gold, among which six golden bowls are the offerings especially worthy of mention.
+<milestone n="2" unit="section" />These weigh thirty talents<note anchored="yes" resp="ed" place="unspecified">The “Attic” talent had a weight of about 58 lbs. avoirdupois, the “<name type="ethnic">Aeginetan</name>” of about 82.</note> and stand in the treasury<note anchored="yes" resp="ed" place="unspecified">Many <name type="ethnic">Greek</name> states had special “treasuries” allotted to them in the temple precincts at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>, in which their offerings were deposited.</note> of the <name type="ethnic">Corinthians</name>; although in truth it is not the treasury of the <name type="ethnic">Corinthian</name> people but of <name type="pers">Cypselus</name> son of <name type="pers">Eetion</name>. This <name type="pers">Gyges</name> then was the first foreigner whom we know who placed offerings at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name> after the king of <name key="tgn,7002613" type="place" reg="Phrygia (region (general)), Turkey, Asia "><placeName key="tgn,7002613" authname="tgn,7002613">Phrygia</placeName></name>, <name type="pers">Midas</name> son of <name type="pers">Gordias</name>.
+<milestone n="3" unit="section" />For <name type="pers">Midas</name> too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of <name type="pers">Gyges</name>. This gold and the silver offered by <name type="pers">Gyges</name> is called by the <name type="ethnic">Delphians</name> “<name type="ethnic">Gygian</name>” after its dedicator.
+</extract>
+</div>
+<!--XSLT-->
+<div id="xslt" style="display:none">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+<html>
+<head>
+<title>Histories</title>
+</head>
+<body>
+<xsl:apply-templates/>
+</body>
+</html>
+</xsl:template>
+</xsl:stylesheet>
+</div>
+<div id="example"></div>
+
+<script type="text/javascript">
+
+
+//Run when document has loaded
+(function(){
+
+function documentLoaded(){
+
+if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+let parser = new DOMParser();
+let xsltDoc, xmlDoc = null;
+
+//XSLT stylesheet
+console.log("XSLT stylesheet");
+let xslt = document.getElementById("xslt");
+if(xslt){
+	
+	//convert to XSLT to string
+	const s = new XMLSerializer();
+ 	const d = xslt.firstElementChild;
+	let str = null;
+	try{
+ 		str = s.serializeToString(d);
+		console.log(str);
+	}catch(error){
+		//we can check here for instances of particular errors
+		console.log(error);
+	}
+	 	
+	//now convert that string into XMLDocument
+	let parser = new DOMParser();
+	xsltDoc = parser.parseFromString(str, "application/xml");
+	const errorNode = xsltDoc.querySelector('parsererror');
+	if (errorNode) {
+  		console.log(errorNode);
+	} else {
+  		// parsing succeeded
+	}
+	//console.log(xsltDoc);
+	//xsltDoc = document.implementation.createDocument(null, "", null);
+	
+	//xsltDoc.appendChild(xslt.firstElementChild);
+}
+
+//XML
+console.log("XML document");
+let xml = document.getElementById("xml");
+if(xml){
+	xmlDoc = document.implementation.createDocument(null, "", null);
+	xmlDoc.appendChild(xml);
+}
+
+//XSLT Processors and import XSLT
+let xsltProcessor = new XSLTProcessor();
+xsltProcessor.importStylesheet(xsltDoc);
+
+//now we can run the transformation and save to fragment
+let fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+
+//now show append the transformation to the <div id="example"> to present
+document.getElementById("example").appendChild(fragment);
+}
+
+window.addEventListener("load", documentLoaded, false);
+})();
+
+
+</script>
+</body>
+</html>

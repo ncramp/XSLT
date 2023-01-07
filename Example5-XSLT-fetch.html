@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>XSLT</title>
+</head>
+<body>
+
+<div id="example">
+</div>
+
+<script type="text/javascript">
+
+function fetchLoad(){
+
+let xsltProcessor = new XSLTProcessor();
+let parser = new DOMParser();
+
+//XSLT stylesheet
+
+fetch('data/example.xsl').then(function(response){
+  // Do stuff with the response
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       let xsl = parser.parseFromString(data, "application/xml");
+       xsltProcessor.importStylesheet(xsl);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+
+//XML file
+
+fetch('data/example.xml').then(function(response){
+  // Do stuff with the response
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       let xml = parser.parseFromString(data, "application/xml");
+       let fragment = xsltProcessor.transformToFragment(xml, document);
+       document.getElementById("example").appendChild(fragment);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+
+}
+
+function documentLoaded(){
+
+  if (!('fetch' in window)) {
+	  console.log('Fetch API not found, please upgrade your browser.');
+	  return;
+  }else{
+	console.log('Fetch API available, loading files..');	
+  }
+
+  fetchLoad();
+}
+
+window.addEventListener("load", documentLoaded, false);
+
+</script>
+</body>
+</html>

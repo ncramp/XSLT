@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans">
+<link rel="stylesheet" href="style.css">
+<title>Using in-browser XSLT and XPath in Javascript and PHP in the 2020's</title>
+</head>
+<body>
+<h1>Using in-browser XSLT and XPath in Javascript and PHP in the 2020's</h1>
+<h2>Contents</h2>
+<ol>
+<li><a href="#context" title="Context">Context</a></li>
+<li><a href="#localwebserver" title="Running XSLT via local web server">Running XSLT via local webserver - e.g. Apache</a></li>
+<li><a href="#javascript" title="Running XSLT via javascript">Running XSLT using Javascript</a></li>
+<li><a href="#server-side" title="Server side - within PHP">Running XSLT using PHP</a></li>
+</li>
+</ol>
+<h2 id="context">Context</h2>
+
+<p>I encountered basic XSLT at University during a MA Digital Humanities programme. Ten years plus later, while my memory of the programme has faded, the XSLT course of the programme really interested me and I really enjoyed learning XSLT. Sometimes you simpy enjoy learning something for learning's sake. The course was only a summary look at XSLT and how it could be used from the perspective of basic humanities texts. I decided to start this page of revised learning, how to's and tips in using XSLT and XPath with Javascript and PHP. Much of this page is written for my own benefit and is intended as a note-form, but it is shared in order that it might be useful to others. There are many tutorials in how to use XSLT and XPath on the web but the focus is really how can XSLT be used within the browser in the 2020's. I'm also going to show how you can use XSLT and XPath in a website context and with newer website technology, Ajax (maybe not so new), Fetch API, FileReader API, Drag and Drop API.</p>
+
+<p>XSL is a XML-based stylesheet language to present and extract fragments of XML documents. XSLT is XSL with Transformation ability (i.e XSL + T = XSLT). XSLT is generally used to extract and transform fragements of one XML document into another XML vocabularly or to pick out selected context to make a HTML output.</p>
+
+<p>The original XSLT specification is now over 20 years old, however XSLT is still a very relevent technology and it is worthwhile being reflective on how some aspects of web technology can make a 'resurgance' - the humble .gif image format has become relevent since the dawn of social media and internet memes, Javascript was also once considered a 'toy' language in a browser, now it has developed into one of the top programming languages to learn and is used for both simple personal websites and large-scale websites with millions of users. It is maybe optimistic to think that XSLT, especially XSLT within the browser, will see a resurgence in the web of the 2020's since it's general use is niche and is most applicable to XML files, but you never know - sometimes technology devites away from the makers intentions to fulfill a modern requirement.</p>
+
+<p>It is also an interesting language to learn since it is template-based and provides a different way to traverse XML documents than via the DOM or SAX and also very different from the scripting languages that dominate the website landscape in the 2020's. It will make you think in a different way about how to get the output you want. It is also interlaced with other XML related technologies - in particular XPath which provides a path-based syntax to select specific elements of XML documents.</p>
+
+<h2>XSLT Standards</h2>
+
+<p>There are 3 stardard versions of the XSLT recommended specification:</p> 
+<p><i>XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999</i>
+<a href="https://www.w3.org/TR/1999/REC-xslt-19991116" title="XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999">XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999</a></p>
+<p><i>XSL Transformations (XSLT) Version 2.0 (Second Edition) W3C Recommendation 30 March 2021 (Amended by W3C)</i>
+<a href="https://www.w3.org/TR/2021/REC-xslt20-20210330/" title="XSL Transformations (XSLT) Version 2.0 (Second Edition) W3C Recommendation 30 March 2021 (Amended by W3C)">XSL Transformations (XSLT) Version 2.0 (Second Edition) W3C Recommendation 30 March 2021 (Amended by W3C)</a></p>
+<p><i>XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017</i>
+<a href="https://www.w3.org/TR/2017/REC-xslt-30-20170608/" title="XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017">XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017</a></p>
+
+<p>If you are using XSLT in 2020 you probably are using it within a legacy application which you need to support or are using XSLT to generate separate files from one XML document via a software application such as the Oxygen XML editor (other editors are available - Michael Kay's Saxon products in particular are seen as the default means of using XSLT).</p>
+
+<p>You can use XSTL also client-side within a supported web browser and by using Javascript - this is not fully guaranteed to work on every browser, using a web server or server side via a scripting language like PHP is the better idea. Using XSLT with both Javascript and PHP is the key focus of this document.</p>
+
+<p>When using XSLT in web-browsers it is sensible to assume XSLT 1.0 as a minimum. XSLT 1.0 will give lots of basic functionality for relatively simple XSLT transformations - but you won't be able to use any features in XSLT 2.0 or 3.0.</p>
+
+<p>Some interesting XML files that can be used to play with XSLT can be found via the <a href="http://www.perseus.tufts.edu" title="Perseus Digital Library">Perseus Digital Library website</a>:
+e.g. there is a example of the text of
+<a href="http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126" title="Perseus - The Histories, Herodotus">The Histories by Herodotus</a>.
+</p>
+
+<h2>Example XSL and XML</h2>
+
+<p>Here is an example of an XML document and XSLT stylesheet you can use. I will use these example documents thoughout unless otherwise stated.</p>
+
+<h3>XML document (example.xml)</h3>
+<p>A extract from the Perseus' Digital Library <a href="http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.01.0126" title="Perseus - The Histories, Herodotus">The Histories, Herodotus</a> as mentioned above.</p>
+
+<code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="example.xsl"?&gt;
+&lt;!-- Text provided by Perseus Digital Library, with funding from The Annenberg CPB/Project. Original version available for viewing and download at http://www.perseus.tufts.edu/hopper/. --&gt;
+&lt;extract&gt;
+&lt;milestone n="1" unit="section" /&gt;
+&lt;milestone unit="para" /&gt;Thus the &lt;name type="pers"&gt;Mermnadae&lt;/name&gt; robbed the &lt;name type="pers"&gt;Heraclidae&lt;/name&gt; of the sovereignty and took it for themselves. Having gotten it, &lt;name type="pers"&gt;Gyges&lt;/name&gt; sent many offerings to &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt;: there are very many silver offerings of his there; and besides the silver, he dedicated a hoard of gold, among which six golden bowls are the offerings especially worthy of mention.
+&lt;milestone n="2" unit="section" /&gt;These weigh thirty talents&lt;note anchored="yes" resp="ed" place="unspecified"&gt;The “Attic” talent had a weight of about 58 lbs. avoirdupois, the “&lt;name type="ethnic"&gt;Aeginetan&lt;/name&gt;” of about 82.&lt;/note&gt; and stand in the treasury&lt;note anchored="yes" resp="ed" place="unspecified"&gt;Many &lt;name type="ethnic"&gt;Greek&lt;/name&gt; states had special “treasuries” allotted to them in the temple precincts at &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt;, in which their offerings were deposited.&lt;/note&gt; of the &lt;name type="ethnic"&gt;Corinthians&lt;/name&gt;; although in truth it is not the treasury of the &lt;name type="ethnic"&gt;Corinthian&lt;/name&gt; people but of &lt;name type="pers"&gt;Cypselus&lt;/name&gt; son of &lt;name type="pers"&gt;Eetion&lt;/name&gt;. This &lt;name type="pers"&gt;Gyges&lt;/name&gt; then was the first foreigner whom we know who placed offerings at &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt; after the king of &lt;name key="tgn,7002613" type="place" reg="Phrygia (region (general)), Turkey, Asia "&gt;&lt;placeName key="tgn,7002613" authname="tgn,7002613"&gt;Phrygia&lt;/placeName&gt;&lt;/name&gt;, &lt;name type="pers"&gt;Midas&lt;/name&gt; son of &lt;name type="pers"&gt;Gordias&lt;/name&gt;.
+&lt;milestone n="3" unit="section" /&gt;For &lt;name type="pers"&gt;Midas&lt;/name&gt; too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of &lt;name type="pers"&gt;Gyges&lt;/name&gt;. This gold and the silver offered by &lt;name type="pers"&gt;Gyges&lt;/name&gt; is called by the &lt;name type="ethnic"&gt;Delphians&lt;/name&gt; “&lt;name type="ethnic"&gt;Gygian&lt;/name&gt;” after its dedicator.
+&lt;/extract&gt;
+</code>
+
+<h3>XSLT document (example.xsl)</h3>
+<p>This stylesheet outputs all the text content from the associated XML document between the HTML <code>&lt;body&gt;</code> tags. As a double check that a transformation is being made, I have included a template statement to match instances of <code>note</code> encountered in the XML document and style the text content italic.</p>
+<pre>
+<code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+	&lt;xsl:template match="/"&gt;
+		&lt;html&gt;
+			&lt;head&gt;
+				&lt;title&gt;Histories&lt;/title&gt;
+			&lt;/head&gt;
+			&lt;body&gt;
+				&lt;xsl:apply-templates/&gt;
+			&lt;/body&gt;
+		&lt;/html&gt;
+	&lt;/xsl:template&gt;
+
+	&lt;xsl:template match="note"&gt;
+		&lt;i&gt;
+			&lt;xsl:apply-templates/&gt;
+		&lt;/i&gt;
+	&lt;/xsl:template&gt;
+
+&lt;/xsl:stylesheet&gt;
+</code>
+</pre>
+
+<h3>Browsers</h3>
+<p>The examples in this document have been tested on these browsers:</p>
+<p>Chromium version 104.0.5112.101 (Official Build) Built on Ubuntu , running on Ubuntu 18.04 (32-bit) and Firefox 103.0 (32-bit)(Mozilla Firefox for Ubuntu, Canonical 1.0)</p>
+
+<p>Note that while Microsoft Edge is based on Chromium, this does not mean these examples should be assumed to work in Edge. As Internet Explorer is no longer supported I have not tested, and this explains why none of the Javascript examples refer to using <code>ActiveXObject</code> as a method to load XML files or AJAX.</p>
+
+<h2 id="localwebserver">Running XSLT via local webserver - e.g. Apache Web Server</h2>
+
+<p>You can run a XSLT on a XML file by opening the XML file from a local web server. You'll need to ensure your XML file is associated with the XSL file, by including this declaration in your XML file.</p>
+
+<pre>
+<code>
+&lt;? xml-stylesheet type="text/xsl" href="example.xsl" ?&gt;
+</code>
+</pre>
+
+<p>To apply the stylesheet you open the XML file in the browser. The files should be in the part of filesystem that is accessible, this is usually <code>/var/www/html/</code>.</p>
+<p>The location to the file can generally be run by navigating to localhost/yourdocumnet.xml. Opening the XML file directly from the file system will not work, because loading the stylesheet from the file system is a cross-origin request, and this is disallowed by browsers by default for security purposes.</p>
+<p>Note however that is used to be possible to use a file from the local file system - so you may see references to this on older webpages. To avoid confusion this is no longer possible by default. There are ways to get around this by adjusting browser settings but this is not recommended from a security perspective - you forget to turn these settings back on and open yourselves to a vulnerablity when using the browser.</p>
+<p>On linux, if you haven't already got a web server, downloading Apache2 is as easy as:</p>
+
+<pre>
+<code>
+sudo apt-get install apache2
+</code>
+</pre>
+
+<p>In your web-broswer, if you view source of the transformation you'll see the XML file without the transformation applied. The browser won't show the transformation in view-source, but if you open up the browsers interactive development tools you will see the transformation and be able to navigate through this.</p>
+
+<p>What you might find with using this method to apply transformations is that the XSLT file may be cached and if you make changes to the XSLT file they are not applied. In Firefox developer tools there is a option within the browser to disable cache which is useful to see. Firefox developer tools will also show you which files are cached as not all files are, you can apply the option selectively.</p>
+
+<h2 id="javascript">XSLT using Javascript</h2>
+
+<p>You can use the XSLT Processor API to apply XSLT transformations in the browser.</p>
+
+<h3 id="javascript-xsltprocessor">XSLT Processor API</h3>
+<p>On <a href="http://www.caniuse.com" title="Caniuse.com">caniuse.com</a> this feature is listed as supported on a variety of mainstream browsers however the website also notes "this feature is non-standard and should not be used without careful consideration. If you made a website that generated XSLT on the fly you might find some users not able to see the transformation.</p>
+
+<p>To use <code>XSLTProcessor()</code> to apply a transformation requires loading a XMLDocument - you can do this using AJAX <code>XMLHttpRequest()</code> or <code>fetch()</code> or a javascript library such as jQuery. You will also require the webpage to be served using a local web server such as Apache.</p>
+
+<p>Here is an example of loading an XSLT and XML file into two XMLDocuments using <code>XMLHttpRequest()</code>, importing the XSLT stylesheet, then transforming the XML document using <code>XSLTProcessor()</code> and appending the resulting tranformation to a <code>&lt;div id="example"&gt;&lt;/div&gt;</code></p>
+
+<h4>Example 1 - XMLHttpRequest and XSLTProcessor</h4>
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+(function(){
+
+if (!('XSLTProcessor' in window)) {
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+let xsltProcessor = new XSLTProcessor();
+let xslDoc;
+let xmlDoc;
+
+let xslRequest = new XMLHttpRequest();
+
+//true as third parameter indicates asynchronous request 
+
+xslRequest.open("GET", "data/example.xsl", true);
+xslRequest.addEventListener("load", function() {
+if(xslRequest.readyState == 4){
+	if (xslRequest.status == 200){
+		xslDoc = xslRequest.responseXML;
+		xsltProcessor.importStylesheet(xslDoc);
+	}
+}
+});
+
+xslRequest.send(null);
+
+// load the XML file
+let xmlRequest = new XMLHttpRequest();
+
+//true as third parameter indicates asynchronous request 
+xmlRequest.open("GET", "data/example.xml", true);
+xmlRequest.addEventListener("load", function() {
+if(xmlRequest.readyState == 4){
+	if (xmlRequest.status == 200){
+		xmlDoc = xmlRequest.responseXML;
+		var fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+		document.getElementById("example").appendChild(fragment);
+	}
+}
+});
+xmlRequest.send(null);
+
+})();
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<h3 id="javascript-jquery">jQuery</h3>
+
+<p>You can load XSLT and XML files using the jQuery <code>$.ajax</code> functionality and then use <code>XSLTProcessor()</code> to apply the transformation. Again, this requires a local webserver and for you to have jQuery loaded. I have used jQuery jquery-3.6.0 here, check what version you have available.</p>
+
+<h4>Example 2 - jQuery ($.ajax) and XSLTProcessor</h4>
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;script src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+$(function(){
+
+if (!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+
+let xsltProcessor = new XSLTProcessor();
+
+//XSLT file
+
+$.ajax({
+    type: "GET",
+    url: "data/example.xsl",
+    dataType: "xml",
+    success: function (xsl) {
+	    xsltProcessor.importStylesheet(xsl);
+    }
+});
+
+//XML file
+
+$.ajax({
+    type: "GET",
+    url: "data/example.xml",
+    dataType: "xml",
+    success: function (xml) {
+	 let fragment = xsltProcessor.transformToFragment(xml, document);
+	 $("#example").append(fragment);
+    }
+
+});
+
+});
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<p>Here's another version of using $.ajax but with Promises.</p>
+
+<h4>Example 3 - jQuery ($.ajax Promises) and XSLTProcessor</h4>
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;script src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+$(function() {
+
+if (!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+let xsltProcessor = new XSLTProcessor();
+
+//XSLT file
+
+$.ajax({
+    type: "GET",
+    url: "data/example.xsl",
+    dataType: "xml"
+}).done(function(data){
+    xsltProcessor.importStylesheet(data);
+}).fail(function(error){
+    console.log("Error: " + error.status + " " + error.statusText);
+}).always(function(){
+    console.log("complete");
+});
+
+//XML file
+
+$.ajax({
+    type: "GET",
+    url: "data/example.xml",
+    dataType: "xml"
+}).done(function(data){
+    let fragment = xsltProcessor.transformToFragment(data, document);
+    $("#example").append(fragment);
+}).fail(function(error){
+    console.log("Error: " + error.status + " " + error.statusText);
+}).always(function(){
+    console.log("complete");
+});
+
+});
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<p>We can use shorthand jQuery forms of <code>$.ajax</code> - <code>.load()</code> or <code>$.get()</code>. Here is an example using <code>.get()</code>, it is significantly shorter than the other methods.</p>
+
+<h4>Example 4 - jQuery ($.get) and XSLTProcessor</h4>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;script src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+$(function(){
+
+if (!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+let xsltProcessor = new XSLTProcessor();
+
+//XSLT file
+$.get("data/example.xsl", function(data) {
+    xsltProcessor.importStylesheet(data);
+});
+
+//XML file
+$.get("data/example.xml", function(data) {
+    let fragment = xsltProcessor.transformToFragment(data, document);
+    $("#example").append(fragment);
+});
+
+});
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<h3 id="javascript-fetch">fetch() API</h3> 
+<p><code>fetch()</code> can be used instead as a replacement for modern replacement for <code>XMLHttpRequest()</code>. Which will work on pretty much everywhere except Internet Explorer - check on <a href="https://caniuse.com/?search=fetch" title="caniuse.com">caniuse.com</a> to verify which.</p>
+<p>Here is an example using <code>fetch()</code> to load an XSLT and XML file to then using <code>XSLTProcessor()</code> to execute the stylesheet. The resulting transformation is appended into a <code>&lt;div id="example"&gt;&lt;/div&gt;</code></p>
+
+<h4>Example 5 - Fetch() and XSLTProcessor</h5>
+<pre>
+<code>
+function fetchLoad(){
+
+if(!('XSLTProcessor' in window && 'DOMParser' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+let xsltProcessor = new XSLTProcessor();
+let parser = new DOMParser();
+
+//XSLT stylesheet
+
+fetch('data/example.xsl').then(function(response){
+  // Do stuff with the response
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       let xsl = parser.parseFromString(data, "application/xml");
+       xsltProcessor.importStylesheet(xsl);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+
+//XML file
+
+fetch('data/example.xml').then(function(response){
+  // Do stuff with the response
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       let xml = parser.parseFromString(data, "application/xml");
+       let fragment = xsltProcessor.transformToFragment(xml, document);
+       document.getElementById("example").appendChild(fragment);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+
+}
+
+//Run when document has loaded
+
+function documentLoaded(){
+
+  if (!('fetch' in window)) {
+	  console.log('Fetch API not found, please upgrade your browser.');
+	  return;
+  }else{
+	console.log('Fetch API available, loading files..');	
+  }
+
+  fetchLoad();
+}
+
+window.addEventListener("load", documentLoaded, false);
+
+</code>
+</pre>
+
+<h3 id="javascript-documentload">XMLDocument.load() ?</h3>
+
+<p>XMLDocument.load() used to be a method to load an XML document however this is depreciated by browsers now.</p>
+<p>See the Mozilla Developer Networks documentation on <a href="https://developer.mozilla.org/en-US/docs/Web/API/XMLDocument/load" title="MDN web docs">XMLDocument.load()</a> for an explanation.</p>
+
+<h3>XML Data Islands?</h3>
+<p>There used to be a notion XML "Data Islands" in HTML. These are pieces of XML incorporated within the HTML of the webpage.<p>
+
+<p>This was at a time before widespread use of databases in website development. Data Islands were supported within IE via an unofficial <code>&lt;XML&gt;</code> element tag and used in a Microsoft MSXML focus (i.e aimed for use in Internet Explorer). Many examples also include JScript which was Microsoft's 'version' of Javascript.</p>
+
+<p>See this old Microsoft article from 2016 which explains the approach <a href="https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ms766512(v=vs.85)" title="Microsoft Data Islands">XML Data Islands<a></p>
+
+<h3>Include XML into HTML</h3>
+
+<p>It is possible to include SVG (a XML vocabularly to define 2D graphics) inline into HTML, XSLT is just another XML vocabularly so why you incorporate XSLT into the HTML page without having an external file to load. Surely we could do the same for the XML we want to transform also?</p>
+
+<p>i.e SVG can be inline within HTML like so.</p>
+
+<p>You could.. but again is this something that is practical. Have a think about whether this is something you would do. A key advantage of having a separate file with the XML is when you want to update information you just have to edit the file. What is the point of having the data scource embedded within a file you won't likely change.</p> 
+
+<p>Here is an example of incorporting the XML and XLST within HTML document and applying a transformation. Both the full context of the example XML and XSLT documents are simply copied into two separate &lt;div&gt; which are then hidden from view using the CSS <code>display:none</code> and with an ID so each can be referenced in the Javascript.</p>
+<p>The XML is easily treatable as a XML fragment, the XSLT is a bit more tricky. The solution below - there may be other approaches - serializes XML as a string using <code>XMLSerializer</code>, then is converted back into XML using <code>DOMParser</code>. 
+
+<p>An this approach avoids using AJAX, a webserver is not required.</p>
+<p>Tested in Firefox only.</p>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;!--XML--&gt;
+&lt;div id="xml" style="display:none"&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;?xml-stylesheet type="text/xsl" href="example.xsl"?&gt;
+&lt;!-- Text provided by Perseus Digital Library, with funding from The Annenberg CPB/Project. Original version available for viewing and download at http://www.perseus.tufts.edu/hopper/. --&gt;
+&lt;extract&gt;
+&lt;milestone n="1" unit="section" /&gt;
+&lt;milestone unit="para" /&gt;Thus the &lt;name type="pers"&gt;Mermnadae&lt;/name&gt; robbed the &lt;name type="pers"&gt;Heraclidae&lt;/name&gt; of the sovereignty and took it for themselves. Having gotten it, &lt;name type="pers"&gt;Gyges&lt;/name&gt; sent many offerings to &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt;: there are very many silver offerings of his there; and besides the silver, he dedicated a hoard of gold, among which six golden bowls are the offerings especially worthy of mention.
+&lt;milestone n="2" unit="section" /&gt;These weigh thirty talents&lt;note anchored="yes" resp="ed" place="unspecified"&gt;The “Attic” talent had a weight of about 58 lbs. avoirdupois, the “&lt;name type="ethnic"&gt;Aeginetan&lt;/name&gt;” of about 82.&lt;/note&gt; and stand in the treasury&lt;note anchored="yes" resp="ed" place="unspecified"&gt;Many &lt;name type="ethnic"&gt;Greek&lt;/name&gt; states had special “treasuries” allotted to them in the temple precincts at &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt;, in which their offerings were deposited.&lt;/note&gt; of the &lt;name type="ethnic"&gt;Corinthians&lt;/name&gt;; although in truth it is not the treasury of the &lt;name type="ethnic"&gt;Corinthian&lt;/name&gt; people but of &lt;name type="pers"&gt;Cypselus&lt;/name&gt; son of &lt;name type="pers"&gt;Eetion&lt;/name&gt;. This &lt;name type="pers"&gt;Gyges&lt;/name&gt; then was the first foreigner whom we know who placed offerings at &lt;name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "&gt;&lt;placeName key="perseus,Delphi" authname="perseus,Delphi"&gt;Delphi&lt;/placeName&gt;&lt;/name&gt; after the king of &lt;name key="tgn,7002613" type="place" reg="Phrygia (region (general)), Turkey, Asia "&gt;&lt;placeName key="tgn,7002613" authname="tgn,7002613"&gt;Phrygia&lt;/placeName&gt;&lt;/name&gt;, &lt;name type="pers"&gt;Midas&lt;/name&gt; son of &lt;name type="pers"&gt;Gordias&lt;/name&gt;.
+&lt;milestone n="3" unit="section" /&gt;For &lt;name type="pers"&gt;Midas&lt;/name&gt; too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of &lt;name type="pers"&gt;Gyges&lt;/name&gt;. This gold and the silver offered by &lt;name type="pers"&gt;Gyges&lt;/name&gt; is called by the &lt;name type="ethnic"&gt;Delphians&lt;/name&gt; “&lt;name type="ethnic"&gt;Gygian&lt;/name&gt;” after its dedicator.
+&lt;/extract&gt;
+&lt;/div&gt;
+&lt;!--XSLT--&gt;
+&lt;div id="xslt" style="display:none"&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+&lt;xsl:template match="/"&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;title&gt;Histories&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;xsl:apply-templates/&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+&lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
+&lt;/div&gt;
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+
+//Run when document has loaded
+(function(){
+
+function documentLoaded(){
+
+if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+let parser = new DOMParser();
+let xsltDoc, xmlDoc = null;
+
+//XSLT stylesheet
+console.log("XSLT stylesheet");
+let xslt = document.getElementById("xslt");
+if(xslt){
+	
+	//convert to XSLT to string
+	const s = new XMLSerializer();
+ 	const d = xslt.firstElementChild;
+	let str = null;
+	try{
+ 		str = s.serializeToString(d);
+		console.log(str);
+	}catch(error){
+		//we can check here for instances of particular errors
+		console.log(error);
+	}
+	 	
+	//now convert that string into XMLDocument
+	let parser = new DOMParser();
+	xsltDoc = parser.parseFromString(str, "application/xml");
+	const errorNode = xsltDoc.querySelector('parsererror');
+	if (errorNode) {
+  		console.log(errorNode);
+	} else {
+  		// parsing succeeded
+	}
+	//console.log(xsltDoc);
+	//xsltDoc = document.implementation.createDocument(null, "", null);
+	
+	//xsltDoc.appendChild(xslt.firstElementChild);
+}
+
+//XML
+console.log("XML document");
+let xml = document.getElementById("xml");
+if(xml){
+	xmlDoc = document.implementation.createDocument(null, "", null);
+	xmlDoc.appendChild(xml);
+}
+
+//XSLT Processors and import XSLT
+let xsltProcessor = new XSLTProcessor();
+xsltProcessor.importStylesheet(xsltDoc);
+
+//now we can run the transformation and save to fragment
+let fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+
+//now show append the transformation to the &lt;div id="example"&gt; to present
+document.getElementById("example").appendChild(fragment);
+}
+
+window.addEventListener("load", documentLoaded, false);
+})();
+
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code>
+</pre>
+
+<h3>What about using <code>&lt;iframe&gt;</code> or <code>&lt;object&gt;</code> to load XML and XSLT?</h3>
+
+<h4>&lt;iframe&gt;</h4>
+<p>You can use an <code>&lt;iframe&gt;</code> to load a XML document within a webpage. What is presented by default in the browser varies - Firefox gives you a indented output of the XML document, others may just show the text content. If you call an <code>&lt;iframe&gt;</code> like so and the XML document is associated with the XSLT stylesheet (reminder: <code>&lt;?xml-stylesheet type="text/xsl" href="example.xsl"?&gt;</code>) you will see the XSLT transformation applied in the browser.</p>
+
+<pre>
+<code>
+...
+&lt;iframe id="xslt-iframe" src="data/example.xml" width="800" height="300"&gt;
+&lt;p>iframe is not supported&lt;/p&gt;
+&lt;/iframe&gt;
+...
+</code>
+</pre>
+
+<p>Note that <code>&lt;frame&gt;</code> and <code>&lt;frameset&gt;</code> are obsolete in HTML5, so any idea of loading a frame with the XML document and another with the XSLT document is not going to be valid.</p> 
+
+<p><code>&lt;iframe&gt;</code> does not recognise a document with file extension .xsl so if you wanted to show the XSLT within the webpage as opposed to just applying the transformation you will need to change the file extension to .xml. You may also need to remove the <code>&lt;?xml-stylesheet type="text/xsl" href="example.xsl"?&gt;</code> to get the browser to output the XSLT.</p>
+
+<p>Note that <code>&lt;iframes&gt;</code> can lead to vulnerabilities if you allow the user to interact with the loaded document - this is a complicated topic, so use carefully.</p>
+
+<p>In this example the XSLT is loaded via the <code>iframe</code> then is serialized into a string, which is then added to the <code>&lt;code id="output"&gt;&lt;code&gt;</code></p></p>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;iframe id="xslt-iframe" src="data/examplexsl.xml" width="800" height="300"&gt;
+&lt;p&gt;iframe is not supported&lt;/p&gt;
+&lt;/iframe&gt;
+
+&lt;pre&gt;
+&lt;code id="output"&gt;
+
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;script type="text/javascript"&gt;
+
+(function(){
+
+function documentLoaded(){
+
+	if(!('XMLSerializer' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+	}
+
+	//iframe
+	console.log("iframe");
+	serializeFromElement("xslt-iframe");
+}
+
+function serializeFromElement(value){
+	
+	//get the iframe
+	let xslt = document.getElementById(value);
+	
+	//get the output location
+	const output = document.getElementById("output");
+	
+	//getting the document
+	let xsltDoc = xslt.contentDocument.documentElement;
+	
+	//serialize the XML to a string
+	let s = new XMLSerializer();
+	let str = null;
+	try{
+ 		str = s.serializeToString(xsltDoc);
+ 		output.textContent = str;
+	}catch(error){
+		console.log(error);
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<h4>&lt;object&gt;</h4>
+
+<p>The <code>&lt;object&gt;</code> can be used to load XML. In this example the XSLT is loaded via the <code>object</code> then serialized into a string, which is then added to the <code>&lt;code id="output"&gt;&lt;code&gt;</code></p>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;object id="xslt-object" type="text/xml" data="data/examplexsl.xml" width="800" height="300"&gt;
+&lt;/object&gt;
+
+&lt;pre&gt;
+&lt;code id="output"&gt;
+
+&lt;/code&gt;
+&lt;/pre&gt;
+
+&lt;script type="text/javascript"&gt;
+
+(function(){
+
+function documentLoaded(){
+
+	if(!('XMLSerializer' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+	}
+
+	//object
+	serializeFromElement("xslt-object");
+}
+
+function serializeFromElement(value){
+	
+	//get the object
+	const xsltobject = document.getElementById(value);
+	
+	//get the output location
+	const output = document.getElementById("output");
+	
+	//getting the document
+	const xsltDoc = xsltobject.contentDocument.documentElement;
+	
+	//serialize the XML to a string
+	let s = new XMLSerializer();
+	let str = null;
+	try{
+ 		str = s.serializeToString(xsltDoc);
+ 		output.textContent = str;
+	}catch(error){
+		console.log(error);
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<h4>&lt;embed&gt;</h4>
+<p><code>embed</code> often serves a similar purpose as <code>iframe</code> and <code>object</code> however this does not load XML according to my experimentation.</p>
+
+<h3>FileReader API - XSLT transformation with no web-server!</h3>
+
+<p>FileReader API can be used as yet another way to load XML and XSLT files within the browser. Files can be loaded without running a webserver.</p>
+
+<p>An example is presented here whereby a <code>&lt;input type="file"&gt;</code> are setup to accept a XSLT document and a XML document, once the XML document is loaded the transformation is applied via <code>XSLTProcessor</code>. This exmple could easily be extended to act as a prototype tool to run a quick test transformation on a different documents. The example could be extended to apply the same XSLT transformation to multiple XML files loaded though the <code>&lt;input type="file"&gt;</code></p>.
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;!--XSLT file--&gt;
+&lt;label&gt;XSLT file&lt;/label&gt;
+&lt;input type="file" id="xsltfileload"&gt;
+
+&lt;!--XML file--&gt;
+&lt;label&gt;XML file&lt;/label&gt;
+&lt;input type="file" id="xmlfileload"&gt;
+
+&lt;div id="output"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+(function(){	
+	
+function documentLoaded(){
+	
+if(!('XSLTProcessor' in window && 'DOMParser' in window)){
+	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
+
+//output
+const output = document.getElementById("output");
+	
+//handle xsltfile
+
+const xsltfile = document.getElementById("xsltfileload");
+xsltfile.addEventListener("change", function(){
+		
+		const file = this.files[0];
+		
+		if(file.type !== "application/xslt+xml"){
+				console.log("file is not an XSLT file");
+				return;
+		}
+		
+		const reader = new FileReader();
+		reader.readAsText(file);
+		
+		//load
+		reader.addEventListener("load", function(){
+			
+			let xsl = parser.parseFromString(reader.result, "application/xml");
+			xsltProcessor.importStylesheet(xsl);
+			
+		}, false);
+		
+		//error
+		reader.addEventListener("error", function(){
+			console.log("error");
+		}, false);
+		
+}, false);
+
+//handle xmlfile
+
+const xmlfile = document.getElementById("xmlfileload");
+xmlfile.addEventListener("change", function(){
+	
+	    const file = this.files[0];
+		
+		if(file.type !== "text/xml"){
+				console.log("file is not an XML file");
+				return;
+		}
+		
+		const reader = new FileReader();
+		reader.readAsText(file);
+		
+		//load
+		reader.addEventListener("load", function(){
+			const xml = parser.parseFromString(reader.result, "application/xml");
+			const fragment = xsltProcessor.transformToFragment(xml, document);
+			output.appendChild(fragment);
+		}, false);
+		
+		//error
+		reader.addEventListener("error", function(){
+			console.log("error");
+		}, false);
+	
+}, false);
+
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+
+<h3>Drag and Drop API</h3>
+
+<p>It is possible to use the Drag and Drop API as another way to bring XML or XSLT documents into the document context for further use. </p>
+<p>This example sets a drop zone that can accept xml or xslt files, then the FileReader API is used to read the documents as XMLDocument.</p>
+
+<p>There are two methods here of pulling out a file from the Drag and Drop API - in Firefox both seem to work - <code>event.dataTransfer.files</code> and <code>event.dataTransfer.items</code></p>
+
+<h4>Example 15</h4>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	
+&lt;style type="text/css"&gt;
+#dropzone {
+  border: 5px solid blue;
+}
+&lt;/style&gt;
+	
+&lt;div 
+id="dropzone" 
+ondrop="dropHandler(event);" 
+ondragover="dragOverHandler(event);"&gt;
+&lt;p&gt;Drag one or more files to this &lt;i&gt;drop zone&lt;/i&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p id="output"&gt;&lt;/p&gt;
+
+&lt;script type="text/javascript"&gt;
+	
+const parser = new DOMParser();
+
+function dropHandler(event){
+	
+	event.preventDefault();	
+	
+	console.log("drop");
+	
+	if (event.dataTransfer.items) {
+		
+		const items = event.dataTransfer.items;
+		for (const item of items) {
+		
+		  //restrict to XSLT or XML files only
+		  
+		  if (item.kind === 'file' && (item.type === "text/xml" || item.type === "application/xslt+xml")) {
+				const file = item.getAsFile();
+				
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+			
+					console.log("load - dataTransfer.item");
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+				    console.log(xsl);
+					//xsltProcessor.importStylesheet(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.item");
+				}, false);
+				
+				
+		    }else{
+				console.log("this is not an XSLT or XML file");
+				return;
+			}
+		}
+	}
+	
+	
+	if(event.dataTransfer.files){
+		
+		const files = event.dataTransfer.files;
+		for (const file of files){
+			
+			if((file.type === "text/xml" || file.type === "application/xslt+xml")){
+				console.log(file);
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+			
+					console.log("load - dataTransfer.files");
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+				    console.log(xsl);
+					//xsltProcessor.importStylesheet(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.files");
+				}, false);
+			
+		}
+	}
+}
+}
+
+function dragOverHandler(event){
+	
+	event.preventDefault();
+	
+	console.log("dragover");
+}	
+	
+	
+	
+(function(){
+	
+function documentLoaded(){
+
+	if(!('DOMParser' in window)){
+		console.log('DOMParser does not appear to be available in this browser. Please try another.');
+		return;
+	}else{
+		console.log('DOMParser is available in this browser.');
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+</code>
+</pre>
+
+<h3 id="server-side">XSLT with PHP</h3>
+
+<p>XSLT is well supported within PHP but of course you will need to install PHP first. PHP isn't available on opening the browser the way that Javascript is available without any installation. The advantage of using PHP with XSLT is that the transformation is completed server side, so will show the user the transformation regardless of what browser they are using.</p>
+
+<p>Download PHP via the terminal:</p>
+
+<pre><code>sudo apt-get install php</code></pre>
+
+<p>It's useful to check your PHP version - mine has come out as 7.2</p>
+
+<pre><code>php -v</code></pre>
+
+<p>If you download PHP via the terminal in Linux you might find the XML modules are not downloaded. You can check whether these are installed with:</p>
+
+<pre><code>php -i | grep "xml"</code></pre>
+
+<p>Or you can check the modules installed:</p>
+
+<pre><code>php -m</code></pre>
+
+<p>If this doesn't list the below modules you won't be able to use XSLT.</p>
+
+<pre><code>SimpleXML
+...
+xml
+xmlreader
+xmlwriter
+xsl
+</code></pre>
+
+<p>To install these, try this:</p> 
+
+<pre><code>sudo apt-get install php-xml</code></pre>
+
+<p>You can check the version of libXML like so:</p>
+
+<pre><code>php --ri libxml
+...
+libxml
+libXML support => active
+libXML Compiled Version => 2.9.4
+libXML Loaded Version => 20904
+libXML streams => enabled
+</code></pre>
+
+<p>You can also check 'xml' with the above to check:</p>
+
+<pre><code>php --ri xml
+...
+XML Support => active
+XML Namespace Support => active
+libxml2 Version => 2.9.4
+</code></pre>
+
+<p>On distros that use Yum, you can try the below:</p>
+
+<pre><code>sudo yum -y install php-xml</code></pre>
+
+<p>If you are using Apache2 then you will need to restart e.g.</p>
+
+<pre><code>sudo service apache2 restart</code></pre>
+
+<h3>Example of using DOMDocument and XSLTProcessor</h3>
+
+<p>You might have seen references to <code>xslt_create();</code> etc these are older methods in PHP 5.6, the new method to process XSLT is <code>XSLTProcessor();</code>To use this you have to load XML and XSLT first and then use the importStyleSheet method to perform the processing.</p>
+
+<h4>Example 7</h4>
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example.xsl";
+$xml = "data/example.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+if (file_exists($xml)){
+	if(!$xmldoc->load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+}
+if (file_exists($xsl)){
+	if(!$xsldoc->load($xsl)){
+		echo "could not load xsl documents";
+	}
+}
+
+libxml_use_internal_errors(true);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result) {
+	foreach (libxml_get_errors() as $error) {
+		echo "Libxml error: {$error->message}\n";
+	}
+}
+libxml_use_internal_errors(false);
+
+if ($result) {
+	echo $xslproc->transformToXML($xmldoc);
+}
+?&gt;
+</code>
+</pre>
+
+<h3>Example of using SimpleXML to load the XML and XSL files</h3>
+<p>SimpleXML is a popular way to deal with XML files and is easier to use than DOM methods. SimpleXML provides the <code>simplexml_load_file()</code> function to load XML files. We can then use the <code>XSLTProcessor</code> to apply the transformation.</p>
+
+<h4>Example 8</h4>
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example.xsl";
+$xml = "data/example.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+if (file_exists($xml)){
+	$xmldoc = simplexml_load_file($xml);
+}
+if (file_exists($xsl)){
+	$xsldoc = simplexml_load_file($xsl);
+}
+
+libxml_use_internal_errors(true);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result) {
+	foreach (libxml_get_errors() as $error) {
+		echo "Libxml error: {$error->message}\n";
+	}
+}
+libxml_use_internal_errors(false);
+
+if ($result) {
+	echo $xslproc->transformToXML($xmldoc);
+}
+?&gt;
+</code>
+</pre>
+
+<h3>Using PHP and Javascript</h3>
+
+<p>You can use PHP to do the XSLT transformation on the server and then return via AJAX/Javascript.</p>
+
+<h4>Example 9</h4>
+<p>This example uses jQuery <code>$.get</code> to call the PHP file. The PHP file then performs the XSLT transformation and the output is returned and the nodes are appended to <code>&lt;div id="example"&gt;&lt;/div&gt;</code></p>
+<pre>
+<code>
+$.get("Example9-XSLT.php", function(data) {
+    $("#example").append(data);
+});
+</code>
+</pre>
+<p>This jQuery example using <code>$.ajax</code> won't work, this is because - at least in Firefox - a <code>&lt;meta&gt;</code> element is included in the output and is left open, like so <code>&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</code>. As this element is not closed, <code>$.ajax</code> recognises this as inproper XML.</p><p>At some point I will revist this and see if there is a solution.</p>
+<pre>
+<code>
+$.ajax({
+    type:"GET",
+    url: "Example9-XSLT.php",
+    dataType: "xml",
+    success: function (data) {
+	    $("#example").append(data);
+    }
+});
+</code>
+</pre>
+<p>Note you can change the <code>dataType</code> to "text", but the <code>&lt;meta&gt;</code> remains. 
+<pre>
+<code>
+$.ajax({
+    type: "GET",
+    url: "Example9-XSLT.php",
+    dataType: "text",
+    success: function (data) {
+	    $("#example").append(data);
+    }
+});
+</code>
+</pre>
+<p>You can also use fetch();</p>
+<pre>
+<code>
+fetch("Example9-XSLT.php").then(function(response){
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       $("#example").append(data);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+</code>
+</pre>
+
+<h4>Example 10</h4>
+
+<p>Here is a more complex example of using PHP and Javascript to apply a XSLT tranformation, but also using passing a parameter to the XSLT stylesheet to present only particular books of Herodotus' Histories. Books are selected from a drop-down list.</p>
+
+<p>Here is the HTML.</p>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;script type="text/javascript" src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;Book&lt;/h2&gt;
+&lt;form&gt;
+&lt;select&gt;
+	&lt;option value="1"&gt;Book 1&lt;/option&gt;
+	&lt;option value="2"&gt;Book 2&lt;/option&gt;
+	&lt;option value="3"&gt;Book 3&lt;/option&gt;
+	&lt;option value="4"&gt;Book 4&lt;/option&gt;
+	&lt;option value="5"&gt;Book 5&lt;/option&gt;
+&lt;/select&gt;
+&lt;/form&gt;
+
+
+&lt;div id="example"&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+$(function(){
+
+	$("select").on('change', function(){
+		let bookVal = this.value;
+	     	$.get("Example10-XSLT.php", { book: bookVal }, function(data) {
+
+			 //empty the &lt;div&gt; to remove any existing content
+			 $("#example").empty();
+	   		 $("#example").append(data);
+		});
+	});
+});
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<p>Here is the PHP - Example10-XSLT.php. Here I am using the full Perseus text of Herodotus. I am using this line to get the value assiged to 'book' GET request <code>$book = htmlspecialchars($_GET["book"]);</code> and using this line to set the <code>&lt;xs:param&gt;</code> value book in my XSLT styesheet - <code>$xslproc->setParameter('', 'book', $book);</code>
+
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example-10.xsl";
+$xml = "data/Perseus_text_1999.01.0126.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+$book = htmlspecialchars($_GET["book"]);
+	
+if (file_exists($xml)){
+	$xmldoc = simplexml_load_file($xml);
+}else{
+	echo "could not load xml document";
+}
+
+if (file_exists($xsl)){
+	$xsldoc = simplexml_load_file($xsl);
+}else{
+	echo "could not load xsl document";
+}
+
+libxml_use_internal_errors(true);
+
+$xslproc->setParameter('', 'book', $book);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result){
+	foreach (libxml_get_errors() as $error){
+		echo "Libxml error: {$error->message}\n";
+	 }
+}
+
+libxml_use_internal_errors(false);
+
+if ($result){
+	echo $xslproc->transformToXML($xmldoc);
+}
+
+?&gt;
+</code>
+</pre>
+
+<p>Here is the XSLT stylesheet which has been adapted to progress templates on the basis of Book number. There are otherways of achieving the same result, this is just an example.</p>
+
+<pre>
+<code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+&lt;xsl:output method="xml" indent="yes"/&gt;
+
+&lt;xsl:param name="book" select="1"/&gt;
+
+&lt;xsl:template match="/"&gt;
+		&lt;xsl:apply-templates/&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="div1[@type='Book']"&gt;
+	
+	&lt;xsl:if test="@n = $book"&gt;
+		&lt;h2&gt;Book &lt;xsl:value-of select="$book"/&gt;&lt;/h2&gt;
+		&lt;xsl:apply-templates/&gt;
+	&lt;/xsl:if&gt;
+
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="teiHeader"/&gt;
+
+&lt;/xsl:stylesheet&gt;
+</code>
+</pre>
+
+<h3>HTML5 DOCTYPE</h3>
+
+<p>to note: exporting HTML5 doctype as <code>&lt;xsl:text disable-output-escaping='yes'&gt;&lt;!DOCTYPE html&gt;&lt;/xsl:text&gt;</code>. If you inspect in Mozilla Firefox it seems the <code>&lt;?xml version="1.0"?&gt;</code> is also exported. (verify) This is an optional feature which processors are not required to implement, and in XSLT 2.0 it is deprecated.</p>
+
+<p>This could be an alternative:</p>
+
+<code>&lt;xsl:output method="html" doctype-system="about:legacy-compat"/&gt;</code>
+
+<p>I read this here: http://www.microhowto.info/howto/generate_an_html5_doctype_using_xslt.html</p>
+
+<p>You can also combine using AJAX, PHP and XSLT to do some interesting things. Whether you might want to in a production environment is another question...there are always other ways to achieve what you need.</p>
+
+<p>Here's an example idea to show information based on a drop-down. AJAX returns a parameter to a PHP script which in turn uses XSLT to pick out information from a XML document.</p>
+
+<h3>XPath in Javascript</h3>
+
+<p>XPath is a path-based syntax used to select features of XML documents. It can select individual or groups of elements (node sets), text content and attribute content. It can also be used to count number of elements or attributes.</p>
+
+<p>The official specification can be found here: </p>
+
+<p>You should check the level of XPath that is available to you in different contexts, when it doubt assume 1.0 is available.</p>
+
+<p>XPath can be used in Javascript through <code>document.evaluate</code>. This can be used on the HTML document itself or on a loaded XML document. We can load the XML file using the javascript already reviewed.</p>
+
+<p>In this case I am using the JQuery <code>get()</code> method we have used previously to load the XML document, then using <code>evaluate</code> to apply a XPath expression to the XML document. The convention appears to be that a try-catch block is used with a iterator method <code>iterateNext</code>. 
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;XPath&lt;/title&gt;
+&lt;script type="text/javascript" src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;Herodotus&lt;/h2&gt;
+
+&lt;div id="example"&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+(function(){
+
+if (!('XPathEvaluator' in window)) {
+	console.log('XPath does not appear to be available in this browser. Please try another.');
+	return;
+}else{
+	console.log('XPath available.');
+}
+
+
+$.get("data/Perseus_text_1999.01.0126.xml", function(doc) {
+
+	let xpath = doc.evaluate('//div1[@type="Book" and @n=1]//milestone[@unit="chapter" and @n="1"]', doc, null, XPathResult.ANY_TYPE, null);
+	let output = [];
+	let count = 0;  
+
+	try {
+	  let node = xpath.iterateNext();
+	  while (node) {
+	    count++;
+            output.push("&lt;h3&gt;Chapter" + count + "&lt;h3&gt;" + node.textContent + "&lt;br/&gt;");
+	    node = xpath.iterateNext();
+	  }
+	}
+	catch (e) {
+	  alert( 'Error: Document tree modified during iteration ' + e );
+	}
+
+	$("#example").append(names.join(" "));
+});
+
+})();
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+
+<h4>Useful XPath</h4>
+<p>There are many resources on XPath, in essence these are the most useful patterns to know. As the Perseus' Digital Library Herodotus document is a TEI document these examples you might encounter when trying to use XPath to navigate around a TEI document. </p>
+
+<table>
+<tr>
+<td>.</td>
+<td>The context node - this can be used to assign an XPath relative to the current location. </td>
+</tr>
+<tr>
+<td>/</td>
+<td>The root node - can be the starting point if XPath is required to match from the root node</td>
+</tr>
+<tr>
+<td>//</td>
+<td>- matches self or descendents - this is often used if you want to match all elements with a particular name e.g. this XPath count(//name) returns counts all name elements in the document.</td>
+</tr>
+<tr>
+<td>section/*/note</td>
+<td>Matches notes that are descendants of section, with an unspecified element between section and note. I.e this selects notes that are grandchildren of section.</td>
+</tr>
+<tr>
+<td>//category/catDesc</td>
+<td>If you know the document and know you want the first item you can use this format. Here the match is made on all catDesc elements that are childen of category elements. </td>
+</tr>
+<tr>
+<td>//category/catDesc[.="Drama"]</td>
+<td>Here is an example using the current node to match those catDesc elements which have the text content "Drama" and who are children of a category element</td>
+</tr>
+<tr>
+<td>//category[catDesc="Drama"]</td>
+<td>Here is an example using the current node to match those category elements which have a catDesc child with the text content "Drama". Compare this with the above example - this path matches category element, whereas the above example matches the catDesc elements.</td>
+</tr>
+<tr>
+<td>//milestone[@unit]</td>
+<td>Matches milestone that have a unit attribute.</td>
+</tr>
+<tr>
+<td>//milestone[@unit="chapter"]</td>
+<td>Matches milestone that have a unit attribute equal to "chapter" - i.e match all chapters.</td>
+</tr>
+<tr>
+<td>div1 | milestone</td>
+<td>Matches div1 or milestone elements</td>
+</tr>
+<tr>
+<td>count(//milestone[@unit="chapter"])</td>
+<td>counts the number of milestone elements that have a unit attribute with the value "chapter" i.e counts all the chapters.</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//name[@type="pers"]</td>
+<td>Matches name elements with attribute type of "pers" that are descendents of div1 element with type attribute of "Book" and n attribute of "1" (i.e Book 1) - i.e match all named persons in Book 1.</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//milestone[@unit="chapter" and @n="1"]</td>
+<td>Matches milestone elements with attribute unit of "chapter" and arribute n of "1" that are descendents of div1 element with type attribute of "Book" and n attribute of "1" (i.e Book 1) - i.e match chapter 1 within book 1</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//milestone[@unit="chapter"][position() = last()]</td>
+<td>Matches the last chapter from book 1.</td>
+</tr>
+<tr>
+<td>element[not(@id)]</td>
+<td>Matches elements that don't have an id attribute</td>
+</tr>
+</table>
+</br>
+<h4>XPath in PHP</h4>
+
+<p>To use use XPath in PHP, use either the <code>query()</code> or <code>evaluate()</code> methods of <a href="https://www.php.net/manual/en/class.domxpath.php" title="PHP.net | DOMXPATH">DOMXPath</a>, a class of the PHP XML DOM or use <a href="https://www.php.net/manual/en/simplexmlelement.xpath" title="PHP.net | PHP:SimpleXMLElement::xpath">SimpleXMLElement::xpath</a> which is a SimpleXML method to match XPath expressions.</p>
+
+
+<h3>DOMXPath</h3>
+<p>DOMXPath supports XPath 1.0</p>
+
+
+<h4>Example 12</h4>
+<p>This example uses the DOMXPath <code>query()</code> method which should be used when a DOM NodeList is the expected return type when the XPath expression is applied. Note the various <code>libxml</code> functions which will help pick up errors in the XPath expression. </p>
+<pre>
+<code>
+&lt;?php
+
+$xml = "data/Perseus_text_1999.01.0126.xml";
+$xmldoc = new DOMDocument();
+
+if (file_exists($xml)){
+
+	if(!$xmldoc-&gt;load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+	libxml_use_internal_errors(true);
+
+	$xpath = new DOMXPath($xmldoc);
+	$nodes = $xpath-&gt;query('//milestone[@unit="chapter"]');
+	if(!$nodes){
+		 foreach (libxml_get_errors() as $error) {
+		    echo "Libxml error: {$error-&gt;message}\n";
+	    	 }
+	}else{
+		foreach($nodes as $node){
+		    echo $node-&gt;tagName;
+		}
+	}
+
+	libxml_use_internal_errors(false);
+}
+
+?&gt;
+</code>
+</pre>
+
+<h4>Example 13</h4>
+<p>This example uses the DOMXPath <code>evaluate()</code> method which should be used when a typed return from the XPath is expected to be returned - i.e a number or text string is expected rather than a DOM NodeList.</p>
+<pre>
+<code>
+&lt;?php
+
+$xml = "data/Perseus_text_1999.01.0126.xml";
+$xmldoc = new DOMDocument();
+
+if (file_exists($xml)){
+
+	if(!$xmldoc-&gt;load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+	libxml_use_internal_errors(true);
+
+	$xpath = new DOMXPath($xmldoc);
+
+	$count = $xpath-&gt;evaluate('count(//milestone[@unit="chapter"])');
+	if(!$count){
+		 foreach (libxml_get_errors() as $error) {
+		    echo "Libxml error: {$error-&gt;message}\n";
+	    	 }
+	}else{
+		echo "There are {$count} chapters";
+	}
+
+	libxml_use_internal_errors(false);
+}
+
+?&gt;
+</code>
+</pre>
+
+
+<h3>SimpleXML</h3>
+
+<h4>Example 14</h4>
+<pre>
+<code>
+&lt;?php
+
+
+$xml = new SimpleXMLElement($string);
+
+/* Search for <a><b><c> */
+$result = $xml-&gt;xpath('/a/b/c');
+
+foreach ($result as $node) {
+    echo '/a/b/c: ',$node,"\n";
+}
+
+/* Relative paths also work... */
+$result = $xml-&gt;xpath('b/c');
+
+foreach ($result as $node) {
+    echo 'b/c: ',$node,"\n";
+}
+
+</code>
+</pre>
+
+<!-- Optional JavaScript -->
+    
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+</body>
+</html>

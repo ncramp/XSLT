@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+<script src="jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div id="example"></div>
+
+<script type="text/javascript">
+
+$(function(){
+
+if (!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}else{
+	console.log('XSLTProcessor available.');
+}
+
+let xsltProcessor = new XSLTProcessor();
+
+//XSLT file
+$.get("data/example.xsl", function(data) {
+    xsltProcessor.importStylesheet(data);
+});
+
+//XML file
+$.get("data/example.xml", function(data) {
+    let fragment = xsltProcessor.transformToFragment(data, document);
+    $("#example").append(fragment);
+});
+
+});
+
+</script>
+</body>
+</html>

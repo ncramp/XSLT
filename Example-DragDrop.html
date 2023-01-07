@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+	
+<style type="text/css">
+#dropzone {
+  border: 5px solid blue;
+  width: 200px;
+  height: 100px;
+}
+</style>
+	
+<div 
+id="dropzone" 
+ondrop="dropHandler(event);" 
+ondragover="dragOverHandler(event);">
+<p>Drag one or more files to this <i>drop zone</i>.</p>
+</div>
+
+<p id="output"></p>
+
+<script type="text/javascript">
+	
+const parser = new DOMParser();
+
+function dropHandler(event){
+	
+	event.preventDefault();	
+	
+	console.log("drop");
+	
+	if (event.dataTransfer.items) {
+		
+		const items = event.dataTransfer.items;
+		for (const item of items) {
+		
+		  //restrict to XSLT or XML files only
+		  
+		  if (item.kind === 'file' && (item.type === "text/xml" || item.type === "application/xslt+xml")) {
+				const file = item.getAsFile();
+				
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+			
+					console.log("load - dataTransfer.item");
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+				    console.log(xsl);
+					//xsltProcessor.importStylesheet(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.item");
+				}, false);
+				
+				
+		    }else{
+				console.log("this is not an XSLT or XML file");
+				return;
+			}
+		}
+	}
+	
+	
+	if(event.dataTransfer.files){
+		
+		const files = event.dataTransfer.files;
+		for (const file of files){
+			
+			if((file.type === "text/xml" || file.type === "application/xslt+xml")){
+				console.log(file);
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+			
+					console.log("load - dataTransfer.files");
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+					
+					const output = document.getElementById("output");
+					output.appendChild(xsl.documentElement);
+				  
+					
+					//xsltProcessor.importStylesheet(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.files");
+				}, false);
+			
+		}
+	}
+}
+}
+
+function dragOverHandler(event){
+	
+	event.preventDefault();
+	
+	console.log("dragover");
+}	
+	
+	
+	
+(function(){
+	
+function documentLoaded(){
+
+	if(!('DOMParser' in window)){
+		console.log('DOMParser does not appear to be available in this browser. Please try another.');
+		return;
+	}else{
+		console.log('DOMParser is available in this browser.');
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+</script>
+
+</body>
+</html>

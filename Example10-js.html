@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XSLT</title>
+<script type="text/javascript" src="jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h2>Book</h2>
+<form>
+<select>
+	<option value="1">Book 1</option>
+	<option value="2">Book 2</option>
+	<option value="3">Book 3</option>
+	<option value="4">Book 4</option>
+	<option value="5">Book 5</option>
+</select>
+</form>
+
+
+<div id="example">
+</div>
+
+<script type="text/javascript">
+$(function(){
+
+	$("select").on('change', function(){
+		let bookVal = this.value;
+	     	$.get("Example10-XSLT.php", { book: bookVal }, function(data) {
+			 //empty the <div> to remove any existing content
+			 $("#example").empty();
+	   		 $("#example").append(data);
+		});
+	});
+});
+
+</script>
+</body>
+</html>
