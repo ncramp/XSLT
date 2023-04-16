@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>XSLT</title>
+</head>
+<body>
+
+<div id="example">
+</div>
+
+<script type="text/javascript">
+
+function load(){
+
+	let xsltProcessor = new XSLTProcessor();
+	let parser = new DOMParser();
+
+	const xslt = document.implementation.createDocument("", "xslt", null);
+	xslt.addEventListener("load",function(){
+		xsltProcessor.importStylesheet(xslt);
+	}, false);
+    xslt.load("data/example.xsl");
+	
+	xslt.onload = function(e){
+		
+		console.log("here" + e);
+	}
+
+	const xml = document.implementation.createDocument("", "xml-transform", null);
+	//xml.addEventListener("load", function(){
+	//	let fragment = xsltProcessor.transformToFragment(xml, document);
+	//    document.getElementById("example").appendChild(fragment);
+	//}, false);
+	//xml.load("data/example.xml");
+	xml.onload = function(e){
+			console.log("here2");
+	}
+	  //let xml = parser.parseFromString(data, "application/xml");
+}
+
+window.addEventListener("load", load, false);
+
+</script>
+</body>
+</html>

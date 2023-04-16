@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+	
+<!--XML file-->
+<label>XML file</label>
+<input type="file" id="xmlfileload">
+<button id="button">Load</button>
+
+<div id="output"></div>
+
+<script type="text/javascript">
+	
+(function(){	
+	
+function documentLoaded(){
+	
+	if (!('showOpenFilePicker' in window)) {
+		console.log('File System Access API does not appear to be available in this browser. Please try another.');
+		return;
+	}else{
+		console.log('File System Access API available.');
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+</script>
+</body>
+</html>

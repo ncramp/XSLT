@@ -12,13 +12,15 @@
   width: 200px;
   height: 100px;
 }
+
+#dropzone:hover{
+	
+	
+}
 </style>
 	
-<div 
-id="dropzone" 
-ondrop="dropHandler(event);" 
-ondragover="dragOverHandler(event);">
-<p>Drag one or more files to this <i>drop zone</i>.</p>
+<div id="drop" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+<p>Drag one or more XML-based files to this <i>here</i>.</p>
 </div>
 
 <p id="output"></p>
@@ -26,12 +28,12 @@ ondragover="dragOverHandler(event);">
 <script type="text/javascript">
 	
 const parser = new DOMParser();
+const xsltProcessor = new XSLTProcessor();
+const drop = document.getElementByID("drop");
 
-function dropHandler(event){
+drop.addEventListender("drop", (event) => {
 	
 	event.preventDefault();	
-	
-	console.log("drop");
 	
 	if (event.dataTransfer.items) {
 		
@@ -99,15 +101,14 @@ function dropHandler(event){
 			
 		}
 	}
-}
-}
+});
 
-function dragOverHandler(event){
+drop.addEventListener("drag", (event) => {
 	
 	event.preventDefault();
 	
 	console.log("dragover");
-}	
+});
 	
 	
 	

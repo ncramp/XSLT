@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@500&display=swap');
+</style> 
+<style type="text/css">
+
+body{
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-weight: 300;
+	margin: 40px; 	
+}
+
+h1, h2, h3, h4{
+	font-family: 'Open Sans', serif;
+}
+
+h1{
+	font-size:2.2em;
+}
+
+div > h1{
+	padding:0;	
+}
+
+h2{
+	font-size:1.8em;
+	font-weight:400;	
+}
+
+h3{
+font-size:1.6em;
+font-weight:400;	
+}
+
+h4{
+font-size:1.5em;
+font-weight:400;	
+}
+
+p, a{
+font-family: Arial, Helvetica, sans-serif;
+font-size:1.0em;
+}
+</style>
+<title>XSLT within the browser in 2023: Drag and Drop API - Part 2</title>
+</head>
+<body>
+<h1>XSLT within the browser in 2023: Drag and Drop API - Part 2</h1>
+
+<h2>Recap</h2>
+<p>In part 1 we looked at different ways to load XML documents in a browser, using <code>XMLHttpRequest()</code>, <code>fetch()</code>, jQuery methods such as <code>ajax(), get()</code> and <code>FileReader()</code>. XSLT was then transformed using the <code>XSLTProcessor</code> and the output was outputted into a HTML document.</p>
+
+<p>In this Part we will look at using the File Access API, Drag and Drop API and also using PHP to apply a transformation on the server and return this to the HTML document.</p>
+
+<h3>File System Access API</h3>
+
+<p>The File System Access API is not fully available on Firefox.</p>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/showOpenFilePicker" title="Window: showOpenFilePicker() method - Web APIs | MDN">window.showOpenFilePicker()</a> is the key method to be used, but this is not available on Firefox.</p>
+<p>Testing for <code>'showOpenFilePicker'</code> in <code>window</code> will let you test if the API is available.</p>
+<pre>
+<code>
+if (!('showOpenFilePicker' in window)) {
+	console.log('File System Access API does not appear to be available in this browser. Please try another.');
+	return;
+}else{
+	console.log('File System Access API available.');
+}
+</code>
+</pre>
+
+<p>I'll return to this one at a later date.</p>
+
+<h3>Drag and Drop API</h3>
+<p>It is possible to use the Drag and Drop API as another way to bring XML or XSLT documents into the document context for further use. </p>
+
+<h4>Example 10 - Using Drag and Drop API to accept XML and XSLT files</h4>
+<p>This example sets a drop zone that can accept XML or XSLT files, then the FileReader API is used to read the documents as XMLDocument. The Drag and Drop is really just a mechanism to get the browser to load a file but could be useful for tools rather than public facing websites.</p>
+
+<p>There are two methods here of pulling out a file from the Drag and Drop API - in Firefox both seem to work - <code>event.dataTransfer.files</code> and <code>event.dataTransfer.items</code></p>
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+	
+&lt;style type="text/css"&gt;
+#dropzone {
+  border: 5px solid blue;
+}
+&lt;/style&gt;
+	
+&lt;div 
+id="dropzone" 
+ondrop="dropHandler(event);" 
+ondragover="dragOverHandler(event);"&gt;
+&lt;p&gt;Drag one or more files to this &lt;i&gt;drop zone&lt;/i&gt;.&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;p id="output"&gt;&lt;/p&gt;
+
+&lt;script type="text/javascript"&gt;
+	
+	
+const xsltProcessor = new XSLTProcessor()	
+	
+const parser = new DOMParser();
+
+function dropHandler(event){
+	
+	event.preventDefault();	
+	
+	if(event.dataTransfer.items){
+		
+		const items = event.dataTransfer.items;
+		for(const item of items){
+			if(item.kind === 'file' && (item.type === "text/xml" || item.type === "application/xslt+xml")){
+				const file = item.getAsFile();
+				
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+					xsltProcessor.importStylesheet(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.item");
+				}, false);
+				
+				
+		    }else{
+				console.log("this is not an XSLT or XML file");
+				return;
+			}
+		}
+	}
+	
+	
+	if(event.dataTransfer.files){
+		
+		const files = event.dataTransfer.files;
+		for(const file of files){
+			
+			if((file.type === "text/xml" || file.type === "application/xslt+xml")){
+				const reader = new FileReader();
+				reader.readAsText(file);
+		
+				//load
+				reader.addEventListener("load", function(){
+					let xsl = parser.parseFromString(reader.result, "application/xml");
+				    console.log(xsl);
+				}, false);
+		
+				//error
+				reader.addEventListener("error", function(){
+					console.log("error - dataTransfer.files");
+				}, false);
+			
+		}
+	}
+}
+}
+
+function dragOverHandler(event){
+	
+	event.preventDefault();
+}	
+	
+	
+	
+(function(){
+	
+function documentLoaded(){
+
+	if(!('DOMParser' in window)){
+		console.log('DOMParser does not appear to be available in this browser. Please try another.');
+		return;
+	}else{
+		console.log('DOMParser is available in this browser.');
+	}
+}
+
+window.addEventListener("load", documentLoaded, false);
+}) ();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+
+
+</code>
+</pre>
+
+<h3 id="server-side">XSLT with PHP</h3>
+
+<p>XSLT is well supported within PHP but of course you will need to install PHP first. PHP isn't available on opening the browser the way that Javascript is available without any installation. The advantage of using PHP with XSLT is that the transformation is completed server side, so will show the user the transformation regardless of what browser they are using.</p>
+
+<p>Download PHP via the terminal:</p>
+
+<pre><code>sudo apt-get install php</code></pre>
+
+<p>It's useful to check your PHP version - mine has come out as 7.2</p>
+
+<pre><code>php -v</code></pre>
+
+<p>If you download PHP via the terminal in Linux you might find the XML modules are not downloaded. You can check whether these are installed with:</p>
+
+<pre><code>php -i | grep "xml"</code></pre>
+
+<p>Or you can check the modules installed:</p>
+
+<pre><code>php -m</code></pre>
+
+<p>If this doesn't list the below modules you won't be able to use XSLT.</p>
+
+<pre><code>SimpleXML
+...
+xml
+xmlreader
+xmlwriter
+xsl
+</code></pre>
+
+<p>To install these, try this:</p> 
+
+<pre><code>sudo apt-get install php-xml</code></pre>
+
+<p>You can check the version of libXML like so:</p>
+
+<pre><code>php --ri libxml
+...
+libxml
+libXML support => active
+libXML Compiled Version => 2.9.4
+libXML Loaded Version => 20904
+libXML streams => enabled
+</code></pre>
+
+<p>You can also check 'xml' with the above to check:</p>
+
+<pre><code>php --ri xml
+...
+XML Support => active
+XML Namespace Support => active
+libxml2 Version => 2.9.4
+</code></pre>
+
+<p>On distros that use Yum, you can try the below:</p>
+
+<pre><code>sudo yum -y install php-xml</code></pre>
+
+<p>If you are using Apache2 then you will need to restart e.g.</p>
+
+<pre><code>sudo service apache2 restart</code></pre>
+
+<h3>Example of using DOMDocument and XSLTProcessor</h3>
+
+<p>You might have seen references to <code>xslt_create();</code> etc these are older methods in PHP 5.6, the new method to process XSLT is <code>XSLTProcessor();</code>To use this you have to load XML and XSLT first and then use the importStyleSheet method to perform the processing.</p>
+
+<h4>Example 7</h4>
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example.xsl";
+$xml = "data/example.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+if (file_exists($xml)){
+	if(!$xmldoc->load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+}
+if (file_exists($xsl)){
+	if(!$xsldoc->load($xsl)){
+		echo "could not load xsl documents";
+	}
+}
+
+libxml_use_internal_errors(true);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result) {
+	foreach (libxml_get_errors() as $error) {
+		echo "Libxml error: {$error->message}\n";
+	}
+}
+libxml_use_internal_errors(false);
+
+if ($result) {
+	echo $xslproc->transformToXML($xmldoc);
+}
+?&gt;
+</code>
+</pre>
+
+<h3>Example of using SimpleXML to load the XML and XSL files</h3>
+<p>SimpleXML is a popular way to deal with XML files and is easier to use than DOM methods. SimpleXML provides the <code>simplexml_load_file()</code> function to load XML files. We can then use the <code>XSLTProcessor</code> to apply the transformation.</p>
+
+<h4>Example 8</h4>
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example.xsl";
+$xml = "data/example.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+if (file_exists($xml)){
+	$xmldoc = simplexml_load_file($xml);
+}
+if (file_exists($xsl)){
+	$xsldoc = simplexml_load_file($xsl);
+}
+
+libxml_use_internal_errors(true);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result) {
+	foreach (libxml_get_errors() as $error) {
+		echo "Libxml error: {$error->message}\n";
+	}
+}
+libxml_use_internal_errors(false);
+
+if ($result) {
+	echo $xslproc->transformToXML($xmldoc);
+}
+?&gt;
+</code>
+</pre>
+
+<h3>Using PHP and Javascript</h3>
+
+<p>You can use PHP to do the XSLT transformation on the server and then return via AJAX/Javascript.</p>
+
+<h4>Example 9</h4>
+<p>This example uses jQuery <code>$.get</code> to call the PHP file. The PHP file then performs the XSLT transformation and the output is returned and the nodes are appended to <code>&lt;div id="example"&gt;&lt;/div&gt;</code></p>
+<pre>
+<code>
+$.get("Example9-XSLT.php", function(data) {
+    $("#example").append(data);
+});
+</code>
+</pre>
+<p>This jQuery example using <code>$.ajax</code> won't work, this is because - at least in Firefox - a <code>&lt;meta&gt;</code> element is included in the output and is left open, like so <code>&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</code>. As this element is not closed, <code>$.ajax</code> recognises this as inproper XML.</p><p>At some point I will revist this and see if there is a solution.</p>
+<pre>
+<code>
+$.ajax({
+    type:"GET",
+    url: "Example9-XSLT.php",
+    dataType: "xml",
+    success: function (data) {
+	    $("#example").append(data);
+    }
+});
+</code>
+</pre>
+<p>Note you can change the <code>dataType</code> to "text", but the <code>&lt;meta&gt;</code> remains. 
+<pre>
+<code>
+$.ajax({
+    type: "GET",
+    url: "Example9-XSLT.php",
+    dataType: "text",
+    success: function (data) {
+	    $("#example").append(data);
+    }
+});
+</code>
+</pre>
+<p>You can also use fetch();</p>
+<pre>
+<code>
+fetch("Example9-XSLT.php").then(function(response){
+  if(response){
+  	return response.text();
+  }
+}).then(function(data) {
+       $("#example").append(data);
+})
+.catch(function(error) {
+  console.log('Looks like there was a problem: ', error);
+});
+</code>
+</pre>
+
+<h4>Example 10</h4>
+
+<p>Here is a more complex example of using PHP and Javascript to apply a XSLT tranformation, but also using passing a parameter to the XSLT stylesheet to present only particular books of Herodotus' Histories. Books are selected from a drop-down list.</p>
+
+<p>Here is the HTML.</p>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;script type="text/javascript" src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;Book&lt;/h2&gt;
+&lt;form&gt;
+&lt;select&gt;
+	&lt;option value="1"&gt;Book 1&lt;/option&gt;
+	&lt;option value="2"&gt;Book 2&lt;/option&gt;
+	&lt;option value="3"&gt;Book 3&lt;/option&gt;
+	&lt;option value="4"&gt;Book 4&lt;/option&gt;
+	&lt;option value="5"&gt;Book 5&lt;/option&gt;
+&lt;/select&gt;
+&lt;/form&gt;
+
+
+&lt;div id="example"&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+$(function(){
+
+	$("select").on('change', function(){
+		let bookVal = this.value;
+	     	$.get("Example10-XSLT.php", { book: bookVal }, function(data) {
+
+			 //empty the &lt;div&gt; to remove any existing content
+			 $("#example").empty();
+	   		 $("#example").append(data);
+		});
+	});
+});
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+<p>Here is the PHP - Example10-XSLT.php. Here I am using the full Perseus text of Herodotus. I am using this line to get the value assiged to 'book' GET request <code>$book = htmlspecialchars($_GET["book"]);</code> and using this line to set the <code>&lt;xs:param&gt;</code> value book in my XSLT styesheet - <code>$xslproc->setParameter('', 'book', $book);</code>
+
+<pre>
+<code>
+&lt;?php
+$xsl = "data/example-10.xsl";
+$xml = "data/Perseus_text_1999.01.0126.xml";
+
+$xmldoc = new DOMDocument();
+$xsldoc = new DOMDocument();
+$xslproc = new XSLTProcessor();
+
+$book = htmlspecialchars($_GET["book"]);
+	
+if (file_exists($xml)){
+	$xmldoc = simplexml_load_file($xml);
+}else{
+	echo "could not load xml document";
+}
+
+if (file_exists($xsl)){
+	$xsldoc = simplexml_load_file($xsl);
+}else{
+	echo "could not load xsl document";
+}
+
+libxml_use_internal_errors(true);
+
+$xslproc->setParameter('', 'book', $book);
+
+$result = $xslproc->importStyleSheet($xsldoc);
+if (!$result){
+	foreach (libxml_get_errors() as $error){
+		echo "Libxml error: {$error->message}\n";
+	 }
+}
+
+libxml_use_internal_errors(false);
+
+if ($result){
+	echo $xslproc->transformToXML($xmldoc);
+}
+
+?&gt;
+</code>
+</pre>
+
+<p>Here is the XSLT stylesheet which has been adapted to progress templates on the basis of Book number. There are otherways of achieving the same result, this is just an example.</p>
+
+<pre>
+<code>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+&lt;xsl:output method="xml" indent="yes"/&gt;
+
+&lt;xsl:param name="book" select="1"/&gt;
+
+&lt;xsl:template match="/"&gt;
+		&lt;xsl:apply-templates/&gt;
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="div1[@type='Book']"&gt;
+	
+	&lt;xsl:if test="@n = $book"&gt;
+		&lt;h2&gt;Book &lt;xsl:value-of select="$book"/&gt;&lt;/h2&gt;
+		&lt;xsl:apply-templates/&gt;
+	&lt;/xsl:if&gt;
+
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="teiHeader"/&gt;
+
+&lt;/xsl:stylesheet&gt;
+</code>
+</pre>
+
+<h3>HTML5 DOCTYPE</h3>
+
+<p>to note: exporting HTML5 doctype as <code>&lt;xsl:text disable-output-escaping='yes'&gt;&lt;!DOCTYPE html&gt;&lt;/xsl:text&gt;</code>. If you inspect in Mozilla Firefox it seems the <code>&lt;?xml version="1.0"?&gt;</code> is also exported. (verify) This is an optional feature which processors are not required to implement, and in XSLT 2.0 it is deprecated.</p>
+
+<p>This could be an alternative:</p>
+
+<code>&lt;xsl:output method="html" doctype-system="about:legacy-compat"/&gt;</code>
+
+<p>I read this here: http://www.microhowto.info/howto/generate_an_html5_doctype_using_xslt.html</p>
+
+<p>You can also combine using AJAX, PHP and XSLT to do some interesting things. Whether you might want to in a production environment is another question...there are always other ways to achieve what you need.</p>
+
+<p>Here's an example idea to show information based on a drop-down. AJAX returns a parameter to a PHP script which in turn uses XSLT to pick out information from a XML document.</p>
+
+<h3>XPath in Javascript</h3>
+
+<p>XPath is a path-based syntax used to select features of XML documents. It can select individual or groups of elements (node sets), text content and attribute content. It can also be used to count number of elements or attributes.</p>
+
+<p>The official specification can be found here: </p>
+
+<p>You should check the level of XPath that is available to you in different contexts, when it doubt assume 1.0 is available.</p>
+
+<p>XPath can be used in Javascript through <code>document.evaluate</code>. This can be used on the HTML document itself or on a loaded XML document. We can load the XML file using the javascript already reviewed.</p>
+
+<p>In this case I am using the JQuery <code>get()</code> method we have used previously to load the XML document, then using <code>evaluate</code> to apply a XPath expression to the XML document. The convention appears to be that a try-catch block is used with a iterator method <code>iterateNext</code>. 
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;title&gt;XPath&lt;/title&gt;
+&lt;script type="text/javascript" src="jquery-3.6.0.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h2&gt;Herodotus&lt;/h2&gt;
+
+&lt;div id="example"&gt;
+&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+(function(){
+
+if (!('XPathEvaluator' in window)) {
+	console.log('XPath does not appear to be available in this browser. Please try another.');
+	return;
+}else{
+	console.log('XPath available.');
+}
+
+
+$.get("data/Perseus_text_1999.01.0126.xml", function(doc) {
+
+	let xpath = doc.evaluate('//div1[@type="Book" and @n=1]//milestone[@unit="chapter" and @n="1"]', doc, null, XPathResult.ANY_TYPE, null);
+	let output = [];
+	let count = 0;  
+
+	try {
+	  let node = xpath.iterateNext();
+	  while (node) {
+	    count++;
+            output.push("&lt;h3&gt;Chapter" + count + "&lt;h3&gt;" + node.textContent + "&lt;br/&gt;");
+	    node = xpath.iterateNext();
+	  }
+	}
+	catch (e) {
+	  alert( 'Error: Document tree modified during iteration ' + e );
+	}
+
+	$("#example").append(names.join(" "));
+});
+
+})();
+
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+</code>
+</pre>
+
+
+<h4>Useful XPath</h4>
+<p>There are many resources on XPath, in essence these are the most useful patterns to know. As the Perseus' Digital Library Herodotus document is a TEI document these examples you might encounter when trying to use XPath to navigate around a TEI document. </p>
+
+<table>
+<tr>
+<td>.</td>
+<td>The context node - this can be used to assign an XPath relative to the current location. </td>
+</tr>
+<tr>
+<td>/</td>
+<td>The root node - can be the starting point if XPath is required to match from the root node</td>
+</tr>
+<tr>
+<td>//</td>
+<td>- matches self or descendents - this is often used if you want to match all elements with a particular name e.g. this XPath count(//name) returns counts all name elements in the document.</td>
+</tr>
+<tr>
+<td>section/*/note</td>
+<td>Matches notes that are descendants of section, with an unspecified element between section and note. I.e this selects notes that are grandchildren of section.</td>
+</tr>
+<tr>
+<td>//category/catDesc</td>
+<td>If you know the document and know you want the first item you can use this format. Here the match is made on all catDesc elements that are childen of category elements. </td>
+</tr>
+<tr>
+<td>//category/catDesc[.="Drama"]</td>
+<td>Here is an example using the current node to match those catDesc elements which have the text content "Drama" and who are children of a category element</td>
+</tr>
+<tr>
+<td>//category[catDesc="Drama"]</td>
+<td>Here is an example using the current node to match those category elements which have a catDesc child with the text content "Drama". Compare this with the above example - this path matches category element, whereas the above example matches the catDesc elements.</td>
+</tr>
+<tr>
+<td>//milestone[@unit]</td>
+<td>Matches milestone that have a unit attribute.</td>
+</tr>
+<tr>
+<td>//milestone[@unit="chapter"]</td>
+<td>Matches milestone that have a unit attribute equal to "chapter" - i.e match all chapters.</td>
+</tr>
+<tr>
+<td>div1 | milestone</td>
+<td>Matches div1 or milestone elements</td>
+</tr>
+<tr>
+<td>count(//milestone[@unit="chapter"])</td>
+<td>counts the number of milestone elements that have a unit attribute with the value "chapter" i.e counts all the chapters.</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//name[@type="pers"]</td>
+<td>Matches name elements with attribute type of "pers" that are descendents of div1 element with type attribute of "Book" and n attribute of "1" (i.e Book 1) - i.e match all named persons in Book 1.</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//milestone[@unit="chapter" and @n="1"]</td>
+<td>Matches milestone elements with attribute unit of "chapter" and arribute n of "1" that are descendents of div1 element with type attribute of "Book" and n attribute of "1" (i.e Book 1) - i.e match chapter 1 within book 1</td>
+</tr>
+<tr>
+<td>//div1[@type="Book" and @n=1]//milestone[@unit="chapter"][position() = last()]</td>
+<td>Matches the last chapter from book 1.</td>
+</tr>
+<tr>
+<td>element[not(@id)]</td>
+<td>Matches elements that don't have an id attribute</td>
+</tr>
+</table>
+</br>
+<h4>XPath in PHP</h4>
+
+<p>To use use XPath in PHP, use either the <code>query()</code> or <code>evaluate()</code> methods of <a href="https://www.php.net/manual/en/class.domxpath.php" title="PHP.net | DOMXPATH">DOMXPath</a>, a class of the PHP XML DOM or use <a href="https://www.php.net/manual/en/simplexmlelement.xpath" title="PHP.net | PHP:SimpleXMLElement::xpath">SimpleXMLElement::xpath</a> which is a SimpleXML method to match XPath expressions.</p>
+
+
+<h3>DOMXPath</h3>
+<p>DOMXPath supports XPath 1.0</p>
+
+
+<h4>Example 12</h4>
+<p>This example uses the DOMXPath <code>query()</code> method which should be used when a DOM NodeList is the expected return type when the XPath expression is applied. Note the various <code>libxml</code> functions which will help pick up errors in the XPath expression. </p>
+<pre>
+<code>
+&lt;?php
+
+$xml = "data/Perseus_text_1999.01.0126.xml";
+$xmldoc = new DOMDocument();
+
+if (file_exists($xml)){
+
+	if(!$xmldoc-&gt;load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+	libxml_use_internal_errors(true);
+
+	$xpath = new DOMXPath($xmldoc);
+	$nodes = $xpath-&gt;query('//milestone[@unit="chapter"]');
+	if(!$nodes){
+		 foreach (libxml_get_errors() as $error) {
+		    echo "Libxml error: {$error-&gt;message}\n";
+	    	 }
+	}else{
+		foreach($nodes as $node){
+		    echo $node-&gt;tagName;
+		}
+	}
+
+	libxml_use_internal_errors(false);
+}
+
+?&gt;
+</code>
+</pre>
+
+<h4>Example 13</h4>
+<p>This example uses the DOMXPath <code>evaluate()</code> method which should be used when a typed return from the XPath is expected to be returned - i.e a number or text string is expected rather than a DOM NodeList.</p>
+<pre>
+<code>
+&lt;?php
+
+$xml = "data/Perseus_text_1999.01.0126.xml";
+$xmldoc = new DOMDocument();
+
+if (file_exists($xml)){
+
+	if(!$xmldoc-&gt;load($xml)){
+	    	echo "could not load xml documents";
+	} 
+
+	libxml_use_internal_errors(true);
+
+	$xpath = new DOMXPath($xmldoc);
+
+	$count = $xpath-&gt;evaluate('count(//milestone[@unit="chapter"])');
+	if(!$count){
+		 foreach (libxml_get_errors() as $error) {
+		    echo "Libxml error: {$error-&gt;message}\n";
+	    	 }
+	}else{
+		echo "There are {$count} chapters";
+	}
+
+	libxml_use_internal_errors(false);
+}
+
+?&gt;
+</code>
+</pre>
+
+
+<h3>SimpleXML</h3>
+
+<p>SimpleXML provides another way to traverse XML documents. It includes a simple way to apply XPath expressions.</p>
+
+<h4>Example 14</h4>
+<pre>
+<code>
+<?php
+
+$xml = "data/Perseus_text_1999.01.0126.xml";
+
+if (file_exists($xml)){
+	
+	$xmldoc = simplexml_load_file($xml);
+
+	libxml_use_internal_errors(true);
+    
+	$result = $xmldoc->xpath('//milestone[@unit="chapter"]');
+	
+	if(!$result){
+		 foreach (libxml_get_errors() as $error) {
+		    echo "Libxml error: {$error->message}\n";
+	    	 }
+	}else{
+		foreach ($result as $node) {
+    			echo "This book includes {$node[unit]} {$node[n]}";
+		}
+	}
+
+	libxml_use_internal_errors(false);
+	
+}else{
+  echo 'could not load XML document';	
+}
+
+?>
+</code>
+</pre>
+
+<!-- Optional JavaScript -->
+    
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+</body>
+</html>
