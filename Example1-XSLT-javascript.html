@@ -19,18 +19,16 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
-let xslDoc;
-let xmlDoc;
+const xsltProcessor = new XSLTProcessor();
 
-let xslRequest = new XMLHttpRequest();
+const xslRequest = new XMLHttpRequest();
 
 //true as third parameter indicates asynchronous request 
 xslRequest.open("GET", "data/example.xsl", true);
 xslRequest.addEventListener("load", function() {
 if(xslRequest.readyState == 4){
 	if (xslRequest.status == 200){
-		xslDoc = xslRequest.responseXML;
+		const xslDoc = xslRequest.responseXML;
 		xsltProcessor.importStylesheet(xslDoc);
 	}
 }
@@ -39,15 +37,15 @@ if(xslRequest.readyState == 4){
 xslRequest.send(null);
 
 // load the XML file
-let xmlRequest = new XMLHttpRequest();
+const xmlRequest = new XMLHttpRequest();
 
 //true as third parameter indicates asynchronous request 
 xmlRequest.open("GET", "data/example.xml", true);
 xmlRequest.addEventListener("load", function() {
 if(xmlRequest.readyState == 4){
 	if (xmlRequest.status == 200){
-		xmlDoc = xmlRequest.responseXML;
-		var fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+		const xmlDoc = xmlRequest.responseXML;
+		const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
 		document.getElementById("example").appendChild(fragment);
 	}
 }
