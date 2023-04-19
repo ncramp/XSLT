@@ -6,15 +6,31 @@
 </head>
 <body>
 
-<div id="example">
-</div>
+<div id="example"></div>
 
 <script type="text/javascript">
-
+	
+(function(){
+	
 function fetchLoad(){
+	
+if(!('fetch' in window)) {
+	  console.log('Fetch does not appear to be available in this browser. Please try another.');
+	  return;
+}
 
-let xsltProcessor = new XSLTProcessor();
-let parser = new DOMParser();
+if(!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+if(!('DOMParser' in window)){
+	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
 
 //XSLT stylesheet
 
@@ -24,7 +40,7 @@ fetch('data/example.xsl').then(function(response){
   	return response.text();
   }
 }).then(function(data) {
-       let xsl = parser.parseFromString(data, "application/xml");
+       const xsl = parser.parseFromString(data, "application/xml");
        xsltProcessor.importStylesheet(xsl);
 })
 .catch(function(error) {
@@ -39,8 +55,8 @@ fetch('data/example.xml').then(function(response){
   	return response.text();
   }
 }).then(function(data) {
-       let xml = parser.parseFromString(data, "application/xml");
-       let fragment = xsltProcessor.transformToFragment(xml, document);
+       const xml = parser.parseFromString(data, "application/xml");
+       const fragment = xsltProcessor.transformToFragment(xml, document);
        document.getElementById("example").appendChild(fragment);
 })
 .catch(function(error) {
@@ -49,19 +65,8 @@ fetch('data/example.xml').then(function(response){
 
 }
 
-function documentLoaded(){
-
-  if (!('fetch' in window)) {
-	  console.log('Fetch API not found, please upgrade your browser.');
-	  return;
-  }else{
-	console.log('Fetch API available, loading files..');	
-  }
-
-  fetchLoad();
-}
-
-window.addEventListener("load", documentLoaded, false);
+window.addEventListener("load", fetchLoad, false);
+})();
 
 </script>
 </body>
