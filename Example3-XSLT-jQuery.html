@@ -20,7 +20,7 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
 
@@ -43,7 +43,7 @@ $.ajax({
     url: "data/example.xml",
     dataType: "xml"
 }).done(function(data){
-    let fragment = xsltProcessor.transformToFragment(data, document);
+    const fragment = xsltProcessor.transformToFragment(data, document);
     $("#example").append(fragment);
 }).fail(function(error){
     console.log("Error: " + error.status + " " + error.statusText);
