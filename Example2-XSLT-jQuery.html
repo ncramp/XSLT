@@ -21,7 +21,7 @@ if (!('XSLTProcessor' in window)) {
 }
 
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
 
@@ -41,7 +41,7 @@ $.ajax({
     url: "data/example.xml",
     dataType: "xml",
     success: function (xml) {
-	 let fragment = xsltProcessor.transformToFragment(xml, document);
+	 const fragment = xsltProcessor.transformToFragment(xml, document);
 	 $("#example").append(fragment);
     }
 
