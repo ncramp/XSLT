@@ -20,16 +20,16 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
-$.get("data/example.xsl", function(data) {
-    xsltProcessor.importStylesheet(data);
+$.get("data/example.xsl", function(xsl) {
+    xsltProcessor.importStylesheet(xsl);
 });
 
 //XML file
-$.get("data/example.xml", function(data) {
-    let fragment = xsltProcessor.transformToFragment(data, document);
+$.get("data/example.xml", function(xml) {
+    const fragment = xsltProcessor.transformToFragment(xml, document);
     $("#example").append(fragment);
 });
 
