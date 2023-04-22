@@ -219,19 +219,16 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
-let xslDoc;
-let xmlDoc;
+const xsltProcessor = new XSLTProcessor();
 
-let xslRequest = new XMLHttpRequest();
+const xslRequest = new XMLHttpRequest();
 
 //true as third parameter indicates asynchronous request 
-
 xslRequest.open("GET", "data/example.xsl", true);
 xslRequest.addEventListener("load", function() {
 if(xslRequest.readyState == 4){
 	if (xslRequest.status == 200){
-		xslDoc = xslRequest.responseXML;
+		const xslDoc = xslRequest.responseXML;
 		xsltProcessor.importStylesheet(xslDoc);
 	}
 }
@@ -240,20 +237,20 @@ if(xslRequest.readyState == 4){
 xslRequest.send(null);
 
 // load the XML file
-let xmlRequest = new XMLHttpRequest();
+const xmlRequest = new XMLHttpRequest();
 
 //true as third parameter indicates asynchronous request 
-
 xmlRequest.open("GET", "data/example.xml", true);
 xmlRequest.addEventListener("load", function() {
 if(xmlRequest.readyState == 4){
 	if (xmlRequest.status == 200){
-		xmlDoc = xmlRequest.responseXML;
-		let fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+		const xmlDoc = xmlRequest.responseXML;
+		const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
 		document.getElementById("example").appendChild(fragment);
 	}
 }
 });
+
 xmlRequest.send(null);
 
 })();
@@ -322,7 +319,7 @@ if (!('XSLTProcessor' in window)) {
 }
 
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
 
@@ -342,7 +339,7 @@ $.ajax({
     url: "data/example.xml",
     dataType: "xml",
     success: function (xml) {
-	 let fragment = xsltProcessor.transformToFragment(xml, document);
+	 const fragment = xsltProcessor.transformToFragment(xml, document);
 	 $("#example").append(fragment);
     }
 
@@ -386,7 +383,7 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
 
@@ -409,7 +406,7 @@ $.ajax({
     url: "data/example.xml",
     dataType: "xml"
 }).done(function(data){
-    let fragment = xsltProcessor.transformToFragment(data, document);
+    const fragment = xsltProcessor.transformToFragment(data, document);
     $("#example").append(fragment);
 }).fail(function(error){
     console.log("Error: " + error.status + " " + error.statusText);
@@ -451,16 +448,16 @@ if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor available.');
 }
 
-let xsltProcessor = new XSLTProcessor();
+const xsltProcessor = new XSLTProcessor();
 
 //XSLT file
-$.get("data/example.xsl", function(data) {
-    xsltProcessor.importStylesheet(data);
+$.get("data/example.xsl", function(xsl) {
+    xsltProcessor.importStylesheet(xsl);
 });
 
 //XML file
-$.get("data/example.xml", function(data) {
-    let fragment = xsltProcessor.transformToFragment(data, document);
+$.get("data/example.xml", function(xml) {
+    const fragment = xsltProcessor.transformToFragment(xml, document);
     $("#example").append(fragment);
 });
 
@@ -495,25 +492,38 @@ As the fetch() API is built into the browser its already available, where suppor
 &lt;div id="example"&gt;&lt;/div&gt;
 
 &lt;script type="text/javascript"&gt;
-function fetchLoad(){
 
-if(!('XSLTProcessor' in window && 'DOMParser' in window)){
-	console.log('XSLTProcessor and DOMParser does not appear to be available in this browser. Please try another.');
-	return;
+(function(){
+	
+function fetchLoad(){
+	
+if(!('fetch' in window)) {
+	  console.log('Fetch does not appear to be available in this browser. Please try another.');
+	  return;
 }
 
-let xsltProcessor = new XSLTProcessor();
-let parser = new DOMParser();
+if(!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+if(!('DOMParser' in window)){
+	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
 
 //XSLT stylesheet
 
 fetch('data/example.xsl').then(function(response){
   // Do stuff with the response
-  if(response.ok){
+  if(response){
   	return response.text();
   }
 }).then(function(data) {
-       let xsl = parser.parseFromString(data, "application/xml");
+       const xsl = parser.parseFromString(data, "application/xml");
        xsltProcessor.importStylesheet(xsl);
 })
 .catch(function(error) {
@@ -524,12 +534,12 @@ fetch('data/example.xsl').then(function(response){
 
 fetch('data/example.xml').then(function(response){
   // Do stuff with the response
-  if(response.ok){
+  if(response){
   	return response.text();
   }
 }).then(function(data) {
-       let xml = parser.parseFromString(data, "application/xml");
-       let fragment = xsltProcessor.transformToFragment(xml, document);
+       const xml = parser.parseFromString(data, "application/xml");
+       const fragment = xsltProcessor.transformToFragment(xml, document);
        document.getElementById("example").appendChild(fragment);
 })
 .catch(function(error) {
@@ -538,21 +548,9 @@ fetch('data/example.xml').then(function(response){
 
 }
 
-//Run when document has loaded
+window.addEventListener("load", fetchLoad, false);
+})();
 
-function documentLoaded(){
-
-  if (!('fetch' in window)) {
-	  console.log('Fetch API not found, please upgrade your browser.');
-	  return;
-  }else{
-	console.log('Fetch API available, loading files..');	
-  }
-
-  fetchLoad();
-}
-
-window.addEventListener("load", documentLoaded, false);
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -593,25 +591,37 @@ myfunction();
 
 &lt;script type="text/javascript"&gt;
 
+(function(){
+
 function fetchLoad(){
-	
-if(!('XSLTProcessor' in window && 'DOMParser' in window)){
-	console.log('XSLTProcessor and DOMParser does not appear to be available in this browser. Please try another.');
-	return;
+
+if(!('fetch' in window)) {
+	  console.log('Fetch does not appear to be available in this browser. Please try another.');
+	  return;
 }
 
-let xsltProcessor = new XSLTProcessor();
-let parser = new DOMParser();
+if(!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+if(!('DOMParser' in window)){
+	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
 
 loadFile("data/example.xsl").then(data => {
 	//this needs to be let
-	let xsl = parser.parseFromString(data, "application/xml");
+	const xsl = parser.parseFromString(data, "application/xml");
     xsltProcessor.importStylesheet(xsl);
 });
 
 loadFile("data/example.xml").then(data => {
-	let xml = parser.parseFromString(data, "application/xml");
-    let fragment = xsltProcessor.transformToFragment(xml, document);
+	const xml = parser.parseFromString(data, "application/xml");
+    const fragment = xsltProcessor.transformToFragment(xml, document);
     document.getElementById("example").appendChild(fragment);
 });
 
@@ -627,19 +637,9 @@ async function loadFile(filepath){
 	return text;
 }
 
-function documentLoaded(){
+window.addEventListener("load", fetchLoad, false);
+})();
 
-  if (!('fetch' in window)) {
-	  console.log('Fetch API not found, please upgrade your browser.');
-	  return;
-  }else{
-	console.log('Fetch API available, loading files..');	
-  }
-
-  fetchLoad();
-}
-
-window.addEventListener("load", documentLoaded, false);
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -664,23 +664,35 @@ window.addEventListener("load", documentLoaded, false);
 
 &lt;script type="text/javascript"&gt;
 		
+(function(){
+
 function fetchLoad(){
-	
-if(!('XSLTProcessor' in window && 'DOMParser' in window)){
-	console.log('XSLTProcessor and DOMParser does not appear to be available in this browser. Please try another.');
-	return;
+
+if(!('fetch' in window)) {
+	  console.log('Fetch does not appear to be available in this browser. Please try another.');
+	  return;
 }
 
-let xsltProcessor = new XSLTProcessor();
-let parser = new DOMParser();
+if(!('XSLTProcessor' in window)) {
+	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+if(!('DOMParser' in window)){
+	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
 
 loadFile("data/example.xsl").then(data => {
 	//this needs to be let
-	let xsl = parser.parseFromString(data, "application/xml");
+	const xsl = parser.parseFromString(data, "application/xml");
     xsltProcessor.importStylesheet(xsl);
 }).then(loadFile("data/example.xml").then(data => {
-	let xml = parser.parseFromString(data, "application/xml");
-    let fragment = xsltProcessor.transformToFragment(xml, document);
+	const xml = parser.parseFromString(data, "application/xml");
+    const fragment = xsltProcessor.transformToFragment(xml, document);
     document.getElementById("example").appendChild(fragment);
 }));
 
@@ -696,19 +708,9 @@ async function loadFile(filepath){
 	return text;
 }
 
-function documentLoaded(){
+window.addEventListener("load", fetchLoad, false);
+})();
 
-  if (!('fetch' in window)) {
-	  console.log('Fetch API not found, please upgrade your browser.');
-	  return;
-  }else{
-	console.log('Fetch API available, loading files..');	
-  }
-
-  fetchLoad();
-}
-
-window.addEventListener("load", documentLoaded, false);
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -751,7 +753,7 @@ pieces of XML incorporated within the HTML of the webpage. This was at a time be
 <p>Including XML within HTML is <a href="https://www.w3.org/2010/html-xml/snapshot/report.html#uc04" 
 title="W3C - HTML/XML Task Force Report">tricky</a></p>
 
-<h4>Example 6 - XML and XSLT within HTML (not a recommended approach!)</h4>
+<h4>Example 8 - XML and XSLT within HTML (not a recommended approach!)</h4>
 
 <p>A key advantage of having a separate file with the XML is when you want to update data you just have to edit the XML file.
 What is the point of having the data scource embedded within a file you won't likely change.</p> 

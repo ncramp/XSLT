@@ -8,12 +8,11 @@ $xsldoc = new DOMDocument();
 $xslproc = new XSLTProcessor();
 
 if (file_exists($xml)){
-
 	if(!$xmldoc->load($xml)){
 	    	echo "could not load xml documents";
-	} 
-
+	}
 }
+
 if (file_exists($xsl)){
 	if(! $xsldoc->load($xsl)){
 		echo "could not load xsl documents";
@@ -28,10 +27,10 @@ if (!$result) {
 		echo "Libxml error: {$error->message}\n";
 	}
 }
+
 libxml_use_internal_errors(false);
 
 if ($result) {
 	echo $xslproc->transformToXML($xmldoc);
 }
-
 ?>
