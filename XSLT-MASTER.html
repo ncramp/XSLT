@@ -1041,6 +1041,105 @@ window.addEventListener("load", documentLoaded, false);
 <h4>&lt;embed&gt;</h4>
 <p><code>embed</code> often serves a similar purpose as <code>iframe</code> and <code>object</code> however this does not load XML according to my experimentation.</p>
 
+<h3>Using a &lt;textarea&gt;</code></h3>
+<p>A <code>&lt;textarea&gt;</code> can be used to accept XSLT and XML content. This would be more suitable for webpages that provide a tool-style use rather than presentating the transformed content. Any real-world example should of course check the value of the <code>&lt;textarea&gt;</code> for malicious content.</p>
+<p>The value of the <code>&lt;textarea&gt;</code>  are read and then <code>DOMParser</code> is used to convent the text content into a XMLDocument object. This object can then be passed to <code>XSLTProcessor</code>.</p>
+
+<h4>Example 9 - <code>&lt;textarea&gt;</code></h4>
+
+<pre>
+<code>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+&lt;meta encoding="utf-8"&gt;
+&lt;title&gt;XSLT&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;form&gt;
+&lt;label for="xslt-textarea"&gt;XSLT&lt;/label&gt;
+&lt;textarea id="xslt-textarea" name="xslt-textarea" style="width:600px; height:400px"&gt;
+Paste XSLT
+&lt;/textarea&gt;
+
+&lt;label for="xml-textarea"&gt;XML&lt;/label&gt;
+&lt;textarea id="xml-textarea" name="xml-textarea" style="width:600px; height:400px"&gt;
+Paste XML
+&lt;/textarea&gt;
+&lt;button id="transform" type="button"&gt;Transform&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id="example"&gt;&lt;/div&gt;
+
+&lt;script type="text/javascript"&gt;
+
+//Run when document has loaded
+(function(){
+
+function documentLoaded(){
+
+if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+	console.log('XSLTProcessor, DOMParser and XMLSerializer do not appear to be available in this browser. Please try another.');
+	return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
+const serializer = new XMLSerializer();
+
+
+const button = document.getElementById("transform");
+button.addEventListener("click", function(){
+	
+	const xslttextarea = document.getElementById("xslt-textarea");
+	xsltstr = xslttextarea.value;
+	//TODO test &gt; 0 length;
+	xsltDoc = parser.parseFromString(xsltstr, "application/xml");
+	console.log(xsltDoc);
+	//TODO test contentype, charset
+	let errorNode = xsltDoc.querySelector('parsererror');
+	if (errorNode) {
+     	console.log(errorNode);
+	} else {
+  		console.log("parsing ok");
+	}
+	
+
+	const xmltextarea = document.getElementById("xml-textarea");
+	xmlstr = xmltextarea.value;
+	//TODO test &gt; 0 length;
+	xmlDoc = parser.parseFromString(xmlstr, "application/xml");
+	console.log(xmlDoc);
+	//TODO test contentype, charset
+	errorNode = xmlDoc.querySelector('parsererror');
+	if (errorNode) {
+     	console.log(errorNode);
+	} else {
+  		console.log("parsing ok");
+	}
+	
+	//XSLT Processor and import XSLT
+	xsltProcessor.importStylesheet(xsltDoc);
+	
+	//now we can run the transformation and save to fragment
+	const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+	document.getElementById("example").appendChild(fragment);
+	
+}, false);
+
+}
+
+window.addEventListener("load", documentLoaded, false);
+})();
+
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+</code>
+</pre>
+
 <h3>FileReader API - XSLT transformation with no web-server!</h3>
 
 <p>FileReader API can be used as yet another way to load XML and XSLT files within the browser. In comparison to examples that have relied upon a local webserver and Ajax (<code>XMLHttpRequest()</code>), using the FileReader API, files can be loaded without running a webserver.</p>
@@ -1152,6 +1251,9 @@ window.addEventListener("load", documentLoaded, false);
 &lt;/html&gt;
 </code>
 </pre>
+
+
+
 
 <h3>Drag and Drop API</h3>
 <p>It is possible to use the Drag and Drop API as another way to bring XML or XSLT documents into the document context for further use. </p>
