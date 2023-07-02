@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>XPath</title>
+</head>
+<body>
+<h2>Herodotus</h2>
+
+<div id="example">
+</div>
+
+<script type="text/javascript">
+
+(function(){
+
+if (!('XPathEvaluator' in window)) {
+	console.log('XPath does not appear to be available in this browser. Please try another.');
+	return;
+}
+
+if(!('fetch' in window)) {
+	  console.log('Fetch does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+if(!('DOMParser' in window)){
+	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+	  return;
+}
+
+
+
+loadFile("data/Perseus_text_1999.01.0126.xml").then(data => {
+	
+	const parser = new DOMParser();
+	const xml = parser.parseFromString(data, "application/xml");
+	
+	let xpath = xml.evaluate('//div1[@type="Book" and @n=1]//milestone[@unit="chapter"]', xml, null, XPathResult.ANY_TYPE, null);
+	let output = []; 
+
+	try {
+	  let node = xpath.iterateNext();
+	  while (node) {
+        output.push(node.attributes[1]);
+	    node = xpath.iterateNext();
+	  }
+	}
+	catch (e) {
+	  alert( 'Error: Document tree modified during iteration ' + e );
+	}
+	
+	const example = document.getElementById("example");
+	example.innerHTML = output.join();
+});
+
+async function loadFile(filepath){
+	
+	const response = await fetch(filepath);
+	if(!response.ok){
+		console.log('Looks like there was a problem: ', response.status);
+		return;
+	}
+	const text = await response.text();
+	return text;
+}
+
+})();
+
+</script>
+</body>
+</html>
