@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+	<code abrev="US">USA</code>
+	<code abrev="EG">Egypt</code>
+	<code abrev="SW">Switzerland</code>
+	<code abrev="MA">Malta</code>
+	<code abrev="ZA">Zambia</code>
+	<code abrev="JA">Japan</code>
+	<code abrev="CH">China</code>
+	<code abrev="ME">Mexico</code>
+	<code abrev="SC">Scotland</code>
+	<code abrev="FR">France</code>
+	<code abrev="GE">Germany</code>
+	<code abrev="PO">Poland</code>
+	<code abrev="HU">Hungary</code>
+	<code abrev="SL">Slovenia</code>
+</manifest>
