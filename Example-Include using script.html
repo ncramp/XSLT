@@ -8,10 +8,10 @@
 	
 <script id="xml" type="application/xml">
 	<extract>
-	<milestone n="1" unit="section" />
-	<milestone unit="para" />Thus the <name type="pers">Mermnadae</name> robbed the <name type="pers">Heraclidae</name> of the sovereignty and took it for themselves. Having gotten it, <name type="pers">Gyges</name> sent many offerings to <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>: there are very many silver offerings of his there; and besides the silver, he dedicated a hoard of gold, among which six golden bowls are the offerings especially worthy of mention.
-	<milestone n="2" unit="section" />These weigh thirty talents<note anchored="yes" resp="ed" place="unspecified">The “Attic” talent had a weight of about 58 lbs. avoirdupois, the “<name type="ethnic">Aeginetan</name>” of about 82.</note> and stand in the treasury<note anchored="yes" resp="ed" place="unspecified">Many <name type="ethnic">Greek</name> states had special “treasuries” allotted to them in the temple precincts at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>, in which their offerings were deposited.</note> of the <name type="ethnic">Corinthians</name>; although in truth it is not the treasury of the <name type="ethnic">Corinthian</name> people but of <name type="pers">Cypselus</name> son of <name type="pers">Eetion</name>. This <name type="pers">Gyges</name> then was the first foreigner whom we know who placed offerings at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name> after the king of <name key="tgn,7002613" type="place" reg="Phrygia (region (general)), Turkey, Asia "><placeName key="tgn,7002613" authname="tgn,7002613">Phrygia</placeName></name>, <name type="pers">Midas</name> son of <name type="pers">Gordias</name>.
-	<milestone n="3" unit="section" />For <name type="pers">Midas</name> too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of <name type="pers">Gyges</name>. This gold and the silver offered by <name type="pers">Gyges</name> is called by the <name type="ethnic">Delphians</name> “<name type="ethnic">Gygian</name>” after its dedicator.
+	<milestone n="1" unit="section"/>
+	<milestone unit="para"/>Thus the <name type="pers">Mermnadae</name> robbed the <name type="pers">Heraclidae</name> of the sovereignty and took it for themselves. Having gotten it, <name type="pers">Gyges</name> sent many offerings to <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>: there are very many silver offerings of his there; and besides the silver, he dedicated a hoard of gold, among which six golden bowls are the offerings especially worthy of mention.
+	<milestone n="2" unit="section"/>These weigh thirty talents<note anchored="yes" resp="ed" place="unspecified">The “Attic” talent had a weight of about 58 lbs. avoirdupois, the “<name type="ethnic">Aeginetan</name>” of about 82.</note> and stand in the treasury<note anchored="yes" resp="ed" place="unspecified">Many <name type="ethnic">Greek</name> states had special “treasuries” allotted to them in the temple precincts at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name>, in which their offerings were deposited.</note> of the <name type="ethnic">Corinthians</name>; although in truth it is not the treasury of the <name type="ethnic">Corinthian</name> people but of <name type="pers">Cypselus</name> son of <name type="pers">Eetion</name>. This <name type="pers">Gyges</name> then was the first foreigner whom we know who placed offerings at <name key="perseus,Delphi" type="place" reg="Delphi [22.5167,38.4917] (Perseus) "><placeName key="perseus,Delphi" authname="perseus,Delphi">Delphi</placeName></name> after the king of <name key="tgn,7002613" type="place" reg="Phrygia (region (general)), Turkey, Asia "><placeName key="tgn,7002613" authname="tgn,7002613">Phrygia</placeName></name>, <name type="pers">Midas</name> son of <name type="pers">Gordias</name>.
+	<milestone n="3" unit="section"/>For <name type="pers">Midas</name> too made an offering: namely, the royal seat on which he sat to give judgment, and a marvellous seat it is. It is set in the same place as the bowls of <name type="pers">Gyges</name>. This gold and the silver offered by <name type="pers">Gyges</name> is called by the <name type="ethnic">Delphians</name> “<name type="ethnic">Gygian</name>” after its dedicator.
 	</extract>
 </script>
 
@@ -96,12 +96,10 @@ if(xml){
 //now we can run the transformation and save to fragment
 const fragment = xsltProcessor.transformToFragment(xmlcopyDoc, document);
 document.getElementById("example").appendChild(fragment);
-
 }
 
 window.addEventListener("load", documentLoaded, false);
 })();
-
 
 </script>
 </body>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta encoding="utf-8">
+<title>XSLT</title>
+</head>
+<body>
+
+<form>
+<label for="xslt-textarea">XSLT</label>
+<textarea id="xslt-textarea" name="xslt-textarea" style="width:600px; height:400px">
+Paste XSLT
+</textarea>
+
+<label for="xml-textarea">XML</label>
+<textarea id="xml-textarea" name="xml-textarea" style="width:600px; height:400px">
+Paste XML
+</textarea>
+<button id="transform" type="button">Transform</button>
+</form>
+
+<div id="example"></div>
+
+<script type="text/javascript">
+
+//Run when document has loaded
+(function(){
+
+function documentLoaded(){
+
+if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+	console.log('XSLTProcessor, DOMParser and XMLSerializer do not appear to be available in this browser. Please try another.');
+	return;
+}
+
+const xsltProcessor = new XSLTProcessor();
+const parser = new DOMParser();
+const serializer = new XMLSerializer();
+
+
+const button = document.getElementById("transform");
+button.addEventListener("click", function(){
+	
+	const xslttextarea = document.getElementById("xslt-textarea");
+	xsltstr = xslttextarea.value;
+	//TODO test > 0 length;
+	xsltDoc = parser.parseFromString(xsltstr, "application/xml");
+	console.log(xsltDoc);
+	//TODO test contentype, charset
+	let errorNode = xsltDoc.querySelector('parsererror');
+	if (errorNode) {
+     	console.log(errorNode);
+	} else {
+  		console.log("parsing ok");
+	}
+	
+
+	const xmltextarea = document.getElementById("xml-textarea");
+	xmlstr = xmltextarea.value;
+	//TODO test > 0 length;
+	xmlDoc = parser.parseFromString(xmlstr, "application/xml");
+	console.log(xmlDoc);
+	//TODO test contentype, charset
+	errorNode = xmlDoc.querySelector('parsererror');
+	if (errorNode) {
+     	console.log(errorNode);
+	} else {
+  		console.log("parsing ok");
+	}
+	
+	//XSLT Processor and import XSLT
+	xsltProcessor.importStylesheet(xsltDoc);
+	
+	//now we can run the transformation and save to fragment
+	const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+	document.getElementById("example").appendChild(fragment);
+	
+}, false);
+
+}
+
+window.addEventListener("load", documentLoaded, false);
+})();
+
+</script>
+</body>
+</html>

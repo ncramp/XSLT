@@ -4,51 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-<style type="text/css">
-
-</style>
-<title>XSLT within the browser in 2023: Could XSLT make a comeback? - Part 1</title>
+<title>XSLT within the browser in the modern web</title>
 </head>
 <body>
 <main>
+<section id="part-1">
 <div class="container">
-<h1>XSLT within the browser in 2023: Could XSLT make a comeback? - Part 1</h1>
+<h1>XSLT within the browser for the modern web</h1>
 <h2 id="context">Context</h2>
 
-<p>I encountered basic XSLT at University during a MA Digital Humanities programme. Ten years plus later, while my general memory of the programme has started to fade, the XSLT course of the programme really interested me and I enjoyed learning XSLT. The course was only a summary look at XSLT and how it could be used from the perspective of basic humanities texts, encoded using the <a href="https://tei-c.org/support/learn/introducing-the-guidelines/" title="Introducing the Guidelines – TEI: Text Encoding Initiative">Text Encoding Initiative (TEI) markup vocabulary</a>.<p>
-	
-<h2>What is XSL and XSLT?</h2>
+<p>XSL (eXtensible Stylesheet Language) is a XML-based stylesheet language to present and extract fragments of XML documents. XSLT is defined as XSL with a Transformation ability (i.e XSL + T = XSLT).</p>
 
-<p>XSL (eXtensible Stylesheet Language) is a XML-based stylesheet language to present and extract fragments of XML documents. XSLT is XSL with a Transformation ability (i.e XSL + T = XSLT). XSLT is generally used to extract and transform fragments of one XML document into another XML vocabularly or to pick out selected context to make a HTML output. It can also be used more creatively to transform fragments of XML in a non-XML based syntax, such as CSV or plain text.</p>
-	
-<h2>It's 2023 - Isn't XSLT now outdated?</h2>
+<p>XSLT is generally used to extract and transform fragments of one XML document into another XML vocabularly or to pick out selected context to make a HTML output. It can also be used more creatively to transform fragments of XML in a non-XML based syntax, such as CSV or plain text.</p>
 
-<p>The original XSLT specification is now over 20 years old, however pieces of software were built around XSLT is still a relevent technology, though not one that will generate a huge following. It is worthwhile being reflective on how some aspects of web technology can make an active resurgance at a later date - the humble .gif image format which once was used to excess on 90's Myspace profiles, has since become relevent since the dawn of social media and internet memes, equally Javascript was also once considered a 'toy' language and early uses were widely seen as an irritation, but now it has developed into one of the top programming languages to learn and is used for both simple personal websites and large-scale application-style websites with millions of users.</p>
-<p>XSLT on the web has declined due to other tools and simpler formats for data exchange becoming more popular, in particular the JSON (Javascript Object Notation) format, which provides a more concise object notation to exchange data. There are some areas though where XML and XSLT remains relevant to use where texts are involved or the source material used is by default encoded in, or lends itself to, an XML first format - a key area is humanities computing.</p>
+<p>I encountered basic XSLT at University during a MA Digital Humanities programme. The XSLT course provided a summary look at XSLT and how it could be used from the perspective of basic humanities texts, encoded using the <a href="https://tei-c.org/support/learn/introducing-the-guidelines/" title="Introducing the Guidelines – TEI: Text Encoding Initiative">Text Encoding Initiative (TEI) markup vocabulary</a><p>
 
-<p>It is maybe optimistic to think that XSLT within the browser will see a resurgence in the web of the 2023 but it's worthwhile thinking also that when XSLT declined, the landscape of the internet was very different:</p>
+</p>Ten years plus later, while my general memory of the programme has started to fade, the XSLT course of the programme really interested me and I enjoyed learning XSLT.<p>
+
+<p>The original <a href="https://www.w3.org/TR/1999/REC-xslt-19991116" title="XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999">XSL Transformations (XSLT) Version 1.0</a>XSLT specification is now over 20 years old, however pieces of software were built around XSLT is still a relevent technology, though not one that will generate a huge following. It is worthwhile being reflective on how some aspects of web technology can make an active resurgance at a later date - the humble .gif image format which once was used to excess on 90's Myspace profiles, has since become relevent since the dawn of social media and internet memes, equally Javascript was also once considered a 'toy' language and early uses were widely seen as an irritation, but now it has developed into one of the top programming languages to learn and is used for both simple personal websites and large-scale application-style websites with millions of users.</p>
+
+<p>The use of XSLT within websites has declined due to other tools and simpler formats for data exchange becoming more popular, in particular the JSON (Javascript Object Notation) format, which provides a more concise object notation to exchange data. There are some areas though where XML and XSLT remains relevant to use where texts are involved or the source material used is by default encoded in, or lends itself to, an XML first format - a key area is humanities computing.</p>
+
+<p>It is worthwhile considering that when XSLT declined, the landscape of the internet was very different that in it now.</p>
 
 <ol>
-<li>Faster internet connections were not available - the 'overhead' of downloading an XML file of a few MB could have been a blocker to use. Compare with the internet of today where whole TV series can be streamed on demand.</li>
+<li><b>Faster internet connections were not available</b> - the 'overhead' of downloading an XML file of a few MB in filesize could have been a blocker to use.</li>
 
-<li>Fast computing (CPU) is prevalent and memory available within web browsers - it is now possible to run entire applications within the web browser, even computationally intensive 3D graphics can be provided within a webpage using WebGL.</li>
+<li><b>Fast computing (CPU) is prevalent and memory available within web browsers</b> - it is now possible to run entire applications within the web browser, even computationally intensive 3D graphics can be provided within a webpage using newer API's such as WebGL. </li>
 
-<li>There is now a strong focus on asynchronous techniques in website development - this is not just due to Ajax techniques (i.e XMLHttpRequest) but more newer features to Javascript such as <code>Promises, await, async</code>. These features make dealing with loading of external resources easier</li>
+<li><b>There is now a strong focus on asynchronous techniques in website development</b> - this is not just due to Ajax techniques (i.e XMLHttpRequest) but more newer features to Javascript such as <code>Promises, await, async</code>. These features make dealing with loading of external resources easier and larger filesize resources much easier.</li>
 
-<li>We now have a host of new Web API's that can support use of XSLT in browser and in website development - XMLHttpRequest (maybe not so new now in 2023!), Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</li>
-
-<li>Sometimes technology devites away from the makers intentions to fulfill a modern requirement.</li>
-
-<li>XSLT is also an interesting language to learn in 2023 since it is template-based and thereby provides a different way to traverse XML documents than via XML DOM or SAX methods and also very different from the scripting languages that dominate the website landscape currently. XSLT will make you <em>think</em> in a different way to scripting languages about how to get the output you want from a transformation. It is also interlaced with an ecosystem other XML related technologies - in particular XPath which provides a path-based syntax to select specific elements of XML documents.</li>
+<li><b>We now have a host of new Web API's that can support use of XSLT in browser and in website development</b> - XMLHttpRequest (not so new now in 2023!), Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</li>
 </ol>
 
-<h2>Scope</h2>
+<p>XSLT is also an interesting language to learn in 2023 since it is template-based and thereby provides a different way to traverse XML documents than via XML DOM or SAX methods and also very different from the scripting languages that dominate the website landscape currently. XSLT will make you <em>think</em> in a different way to scripting languages about how to get the output you want from a transformation. It is also interlaced with an ecosystem other XML related technologies - in particular XPath which provides a path-based syntax to select specific elements of XML documents.</p>
 
-<p>I decided initially to write an article series to record revised learning of XSLT, how it could now work in the web browsers of 2023, how to's and tips in using XSLT and XPath with Javascript and PHP. There are many tutorials in how to use XSLT and XPath on the web but many of these are dated and from the Internet Explorer era. Many of the examples shown in tutorials are also structured XML files, whereas I wanted to record some 'mixed content' humanities based application of XSLT.</p>
+<h2>Focus</h2>
 
-<p>Briefly, the focus of this series of articles is:</p>
-<p>How can XSLT be used within modern browsers of 2023 - Firefox, Google Chrome, Chromium era.</p>
-<p>I'm also going to show how you can use XSLT and XPath in a website context and with newer website technology, XMLHttpRequest (maybe not so new now in 2023!), Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</p>
+<p>Briefly, the focus of this text is:</p>
+<p>How can XSLT be used within modern browsers of 2023 - Firefox, Google Chrome, Chromium era - and utilising with newer website technology API's, XMLHttpRequest (maybe not so new now in 2023!), Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</p>
+<p>In places I will use <a href="https://jquery.com/" title="jQuery">jQuery</a> (yes, jQuery is still useful in 2023!) and <a href="https://getbootstrap.com/" title="Get Bootstrap 5.2">Bootstrap 5.2</a></p>
 
 <h2>XSLT Standards</h2>
 
@@ -60,9 +55,13 @@
 <p><i>XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017</i>
 <a href="https://www.w3.org/TR/2017/REC-xslt-30-20170608/" title="XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017">XSL Transformations (XSLT) Version 3.0 W3C Recommendation 8 June 2017</a></p>
 
-<p>If you are using XSLT in 2023 you probably are using it within a legacy application which you need to support or are using XSLT to generate separate files from one XML document via a software application such as the Oxygen XML editor (other editors are available - Michael Kay's Saxon products in particular are seen as the default means of using XSLT).</p>
+<p>If you are using XSLT in 2023 you probably are using it within a legacy application which you need to support or are using XSLT to generate separate files from one XML document via a software application.</p>
 
-<p>When using XSLT in web-browsers it is sensible to assume XSLT 1.0 as a minimum. Current browsers support XSLT 1.0 with no clear plan to support higher features. XSLT 1.0 will give lots of basic functionality for relatively simple XSLT transformations - but you won't be able to use any features in XSLT 2.0 or 3.0. A summary search engine peruse will likely confirm that browsers are not intending to support anything further than 1.0.</p>
+<p>When using XSLT in web-browsers it is sensible to assume XSLT 1.0 support is available as a minimum.</p>
+
+<p>Current browsers support XSLT 1.0 with no clear plan to support higher features. XSLT 1.0 will give lots of basic functionality for relatively simple XSLT transformations - but you won't be able to use any features in XSLT 2.0 or 3.0. A summary search engine peruse will likely confirm that browsers are not intending to support anything further than 1.0.</p>
+
+<p><i>Note that there are javascript products that provide XLST support above 1.0, Michael Kay's Saxon products are an example. These products are not included in this text but easily found with a simple websearch.</i></p>
 
 <p>Some interesting Humanities XML files that can be used to experiment with XSLT can be found via the <a href="http://www.perseus.tufts.edu" title="Perseus Digital Library">Perseus Digital Library website</a>.
 
@@ -354,8 +353,6 @@ $.ajax({
 </pre>
 
 <p>The output seen in the browser will be identical to the first example.</p>
-
-<!--<img src="Example2.png" title="Example 1" width="600" height="400"/>-->
 
 <h4>Example 3 - jQuery ($.ajax Promises) and XSLTProcessor</h4>
 <p>Here's another version of using <code>$.ajax</code> but with javascript Promises.</p>
@@ -717,7 +714,7 @@ window.addEventListener("load", fetchLoad, false);
 </code>
 </pre>
 
-<h3>What about <code>XMLDocument.load()</code>?</h3>
+<h3>XMLDocument.load()</h3>
 
 <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/XMLDocument/load" title="XMLDocument - Web APIs | MDN"><code>XMLDocument.load()</code></a></p>
 <p>It's worth noting that this used to work, but now it doesn't (at least not in Firefox).</p>
@@ -1251,9 +1248,6 @@ window.addEventListener("load", documentLoaded, false);
 &lt;/html&gt;
 </code>
 </pre>
-
-
-
 
 <h3>Drag and Drop API</h3>
 <p>It is possible to use the Drag and Drop API as another way to bring XML or XSLT documents into the document context for further use. </p>
@@ -1976,6 +1970,7 @@ if (file_exists($xml)){
 </pre>
 </div>
 </main>
+</section>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
 </body>
