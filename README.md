@@ -1,4 +1,4 @@
-# XSLT on the modern web
+# XSLT for the modern web
 DRAFT for a long-read text on how to use basic XSLT with Javascript and PHP in a website context in 2023. This is a live digital-first text with examples.
 
 # Scope
