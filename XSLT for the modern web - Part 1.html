@@ -21,23 +21,23 @@
 
 <p>Ten years plus later, while my general memory of the programme has started to fade, the XSLT course of the programme really interested me and I enjoyed learning XSLT.</p>
 
-<p>The original <a href="https://www.w3.org/TR/1999/REC-xslt-19991116" title="XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999">XSL Transformations (XSLT) Version 1.0</a>XSLT specification is now over 20 years old, however pieces of software were built around XSLT is still a relevent technology, though not one that will generate a huge following. It is worthwhile being reflective on how some aspects of web technology can make an active resurgance at a later date - the humble .gif image format which once was used to excess on 90's Myspace profiles, has since become relevent since the dawn of social media and internet memes, equally Javascript was also once considered a 'toy' language and early uses were widely seen as an irritation, but now it has developed into one of the top programming languages to learn and is used for both simple personal websites and large-scale application-style websites with millions of users.</p>
+<p>The original <a href="https://www.w3.org/TR/1999/REC-xslt-19991116" title="XSL Transformations (XSLT) Version 1.0 W3C Recommendation 16 November 1999">XSL Transformations (XSLT) Version 1.0</a>XSLT specification is now over 20 years old, however pieces of software were built around XSLT is still a relevent technology, though not one that will generate a huge following. It is worthwhile being reflective on how some aspects of web technology can make an active resurgance at a later date - the humble .gif image format which once was used to excess on 90's Myspace profiles, has since become relevent since the dawn of social media and internet memes, equally Javascript was also once considered a 'toy' language and early uses were widely seen as gimmic or a source of irritation, but now it has developed into one of the top programming languages to learn and is used for both simple personal websites and powering large-scale application-style websites with millions of users.</p>
 
-<p>The use of XSLT within websites has declined due to other tools and simpler formats for data exchange becoming more popular, in particular the JSON (Javascript Object Notation) format, which provides a more concise object notation to exchange data. There are some areas though where XML and XSLT remains relevant to use where texts are involved or the source material used is by default encoded in, or lends itself to, an XML first format - a key area is humanities computing.</p>
+<p>The use of XSLT within websites declined due to other tools and simpler formats for data exchange becoming more popular, in particular the JSON (Javascript Object Notation) format, which provides a more concise object notation to exchange data. There are some areas though where XML and XSLT remains relevant to use where texts are involved or the source material used is by default encoded in, or lends itself to, an XML first format - a key area is humanities computing.</p>
 
-<p>It is worthwhile considering that when XSLT declined, the landscape of the internet was very different that in it now.</p>
+<p>It is worthwhile considering that when the use of XSLT on the web declined, the landscape of the internet was very different that in it now.</p>
 
 <ol>
 <li><b>Faster internet connections were not available</b> - the 'overhead' of downloading an XML file of a few MB in filesize could have been a blocker to use.</li>
 
 <li><b>Fast computing (CPU) is prevalent and memory available within web browsers</b> - it is now possible to run entire applications within the web browser, even computationally intensive 3D graphics can be provided within a webpage using newer API's such as WebGL. </li>
 
-<li><b>There is now a strong focus on asynchronous techniques in website development</b> - this is not just due to Ajax techniques (i.e XMLHttpRequest) but more newer features to Javascript such as <code>Promises, await, async</code>. These features make dealing with loading of external resources easier and larger filesize resources much easier.</li>
+<li><b>There is now a strong focus on asynchronous techniques in website development</b> - this is not just due to 'Ajax' techniques (i.e uses of XMLHttpRequest) but more newer features to Javascript such as <code>Promises, await, async</code>. These features make dealing with loading of external resources easier and larger filesize resources much easier.</li>
 
-<li><b>We now have a host of new Web API's that can support use of XSLT in browser and in website development</b> - XMLHttpRequest (not so new now in 2023!), Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</li>
+<li><b>We now have a host of new Web API's that can can be used to support use of XSLT in the browser and in website development</b> - Fetch API, FileReader API, Drag and Drop API, Web Workers, Service Workers, IndexedDB, Web Storage.</li>
 </ol>
 
-<p>XSLT is also an interesting language to learn in 2023 since it is template-based and thereby provides a different way to traverse XML documents than via XML DOM or SAX methods and also very different from the scripting languages that dominate the website landscape currently. XSLT will make you <em>think</em> in a different way to scripting languages about how to get the output you want from a transformation. It is also interlaced with an ecosystem other XML related technologies - in particular XPath which provides a path-based syntax to select specific elements of XML documents.</p>
+<p>XSLT is also an interesting language to learn in 2023 since it is template-based and thereby provides a different way to traverse XML documents than via XML DOM or SAX methods and also very different from the scripting languages that dominate the website landscape currently. XSLT will make you <em>think</em> in a different way to scripting languages about how to get the output you want from a transformation. It is also interlaced with an ecosystem other XML related technologies - in particular XSLT would not be possible without XPath which provides a path-based syntax to select specific elements of XML documents.</p>
 
 <h2>Focus</h2>
 
@@ -139,13 +139,22 @@ Having gotten it, &lt;name type="pers"&gt;Gyges&lt;/name&gt; sent many offerings
 
 <p>To apply the transformation you open the XML file in the browser and the transformation should be visible. The files should be in the part of filesystem that is accessible, in Linux systems I have found this is usually <code>/var/www/html/</code>. If your XML and XSLT were stored in <code>/var/www/html/data/</code>, you would just enter <code>localhost/data/example.xml</code> and the transformation will be visible.</p>
 
-<p>Note, on Linux systems, if the transformation is not applied you may have to check the file permissions.</p>
-<p>Using the terminal you can use chgrp and chmod however you need to provide the right permissions.</p>
-<code>sudo chgrp [group] example.xml</code>
-<code>sudo chmod 666 example.xml</code>
-<p>On a public server you would want to lock down the files to read only, but whilst editing from the localhost, having the user with write access makes life a bit easier, for example if you navigate to the directory above the data folder, you could set the user for all files within the directory. </p>
+<p>Note, on Linux systems, if the transformation is not applied you may have to check the file permissions. Using the terminal you can use <code>chgrp</code> and <code>chmod</code> however you need to provide the right permissions.</p>
 
-<code>sudo chgrp [group] ./data -R</code>
+<pre>
+sudo chgrp [group] example.xml
+sudo chmod 666 example.xml
+</code>
+</pre>
+
+<p>On a public server you would want to lock down the files to read only, but whilst editing from the localhost, having the user with write access makes life a bit easier, for example if you navigate to the directory above the data folder, you could set the user for all files within the directory.</p>
+
+<pre>
+<code>
+sudo chgrp [group] ./data -R
+</code>
+</pre>
+
 <p>Be careful setting permissions for directories - as user you need the execute flag.</p>
 
 <p>Opening the XML file directly from the file system (i.e not using localhost in the browser) will not work, because loading the stylesheet from the file system is a cross-origin request, and this is disallowed by browsers by default for security purposes.</p>
@@ -164,8 +173,6 @@ sudo apt-get install apache2
 
 <p>What you might find with using this method to apply transformations is that the XSLT file may be cached and if you make changes to the XSLT file they are not applied. In Firefox developer tools there is a option within the browser to disable cache which is useful to see. Firefox developer tools will also show you which files are cached as not all files are, you can apply the option selectively.</p>
 
-<!--<img src="Firefox-disablecache.png" title="Firefox Disable Cache" width="600" height="400"/>-->
-
 <h2 id="javascript">Running XSLT using Javascript - XSLTProcessor()</h2>
 
 <p>You can use the XSLT Processor API to apply XSLT transformations in the browser.</p>
@@ -173,18 +180,24 @@ sudo apt-get install apache2
 <h3 id="javascript-xsltprocessor">XSLT Processor API</h3>
 <p>On <a href="http://www.caniuse.com" title="Caniuse.com">caniuse.com</a> this feature is listed as supported on a variety of mainstream browsers however the website also notes "this feature is non-standard and should not be used without careful consideration. If you made a website that generated XSLT on the fly you might find some users not able to see the transformation.</p>
 
-<p>Using XSLTProcessor to apply a transformation requires loading a file of document type <code>XMLDocument</code> - you can do this using AJAX <code>XMLHttpRequest()</code> or <code>fetch()</code> or a javascript library such as jQuery. You will also require the webpage to be served using a local web server such as Apache.</p>
+<p>Using XSLTProcessor to apply a transformation requires loading a file of document type <code>XMLDocument</code> - you can do this using AJAX <code>XMLHttpRequest()</code> or <code>fetch()</code> or a javascript library such as jQuery.</p>
 
-<p>It's sensible to test first if the browser has <code>XSLTProcessor()</code> available. To do this we can test the <code>window</code> object for the string <code>'XSLTProcessor'</code>.</p>
+<p>You will also require the webpage to be served using a local web server such as Apache.</p>
+
+<p>It's sensible to test first if the browser has <code>XSLTProcessor()</code> available. To do this we can test the <code>window</code> object for the string <code>'XSLTProcessor'</code> and then provide an update in the browser console if available.</p>
 
 <pre>
 <code>
+(function(){
+	
 if (!('XSLTProcessor' in window)) {
 	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
 	return;
 }else{
 	console.log('XSLTProcessor available.');
 }
+
+});
 </code>
 </pre>
 
@@ -195,6 +208,7 @@ if (!('XSLTProcessor' in window)) {
 <p>To find out more about XSLTProcessor and its methods, <a href="https://developer.mozilla.org/en-US/docs/Web/API/XSLTProcessor" title="XSLTProcessor - Web APIs | MDN">Mozilla Developer Networks</a> has a good overview.</p>
 
 <h4>Example 1 - XMLHttpRequest() and XSLTProcessor()</h4>
+
 <pre>
 <code>
 &lt;!DOCTYPE html&gt;
@@ -211,46 +225,46 @@ if (!('XSLTProcessor' in window)) {
 
 (function(){
 
-if (!('XSLTProcessor' in window)) {
-	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	return;
-}else{
-	console.log('XSLTProcessor available.');
-}
-
-const xsltProcessor = new XSLTProcessor();
-
-const xslRequest = new XMLHttpRequest();
-
-//true as third parameter indicates asynchronous request 
-xslRequest.open("GET", "data/example.xsl", true);
-xslRequest.addEventListener("load", function() {
-if(xslRequest.readyState == 4){
-	if (xslRequest.status == 200){
-		const xslDoc = xslRequest.responseXML;
-		xsltProcessor.importStylesheet(xslDoc);
+	if (!('XSLTProcessor' in window)) {
+		console.log('XSLTProcessor does not appear to be available in this browser. Please try  another.');
+		return;
+	}else{
+		console.log('XSLTProcessor available.');
 	}
-}
-});
 
-xslRequest.send(null);
+	const xsltProcessor = new XSLTProcessor();
 
-// load the XML file
-const xmlRequest = new XMLHttpRequest();
+	const xslRequest = new XMLHttpRequest();
 
-//true as third parameter indicates asynchronous request 
-xmlRequest.open("GET", "data/example.xml", true);
-xmlRequest.addEventListener("load", function() {
-if(xmlRequest.readyState == 4){
-	if (xmlRequest.status == 200){
-		const xmlDoc = xmlRequest.responseXML;
-		const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
-		document.getElementById("example").appendChild(fragment);
+	//true as third parameter indicates asynchronous request 
+	xslRequest.open("GET", "data/example.xsl", true);
+	xslRequest.addEventListener("load", function() {
+	if(xslRequest.readyState == 4){
+		if (xslRequest.status == 200){
+			const xslDoc = xslRequest.responseXML;
+			xsltProcessor.importStylesheet(xslDoc);
+		}
 	}
-}
-});
+	});
 
-xmlRequest.send(null);
+	xslRequest.send(null);
+
+	// load the XML file
+	const xmlRequest = new XMLHttpRequest();
+
+	//true as third parameter indicates asynchronous request 
+	xmlRequest.open("GET", "data/example.xml", true);
+	xmlRequest.addEventListener("load", function() {
+	if(xmlRequest.readyState == 4){
+		if (xmlRequest.status == 200){
+			const xmlDoc = xmlRequest.responseXML;
+			const fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+			document.getElementById("example").appendChild(fragment);
+		}
+	}
+	});
+
+	xmlRequest.send(null);
 
 })();
 
@@ -260,36 +274,33 @@ xmlRequest.send(null);
 </code>
 </pre>
 
-<p>The transformation is applied but using the existing example.xsl document we end up with two HTML documents within each other! That's not quite what we want.I'll call this version example-fragment.xsl. To keep things simple I will just put the text into HTML paragraphs.</p>
-
-<!--<img src="Example1.png" title="Example 1" width="600" height="400"/>-->
+<p>The transformation is applied but using the existing example.xsl document we end up with two HTML documents within each other! That's not quite what we want. I'll call this version example-fragment.xsl. To keep things simple I will just put the text into HTML paragraphs.</p>
 
 <pre>
 <code>
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+	&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+	&lt;xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
 
-&lt;xsl:template match="/"&gt;
-	&lt;p&gt;
-		&lt;xsl:apply-templates/&gt;
-	&lt;/p&gt;
-&lt;/xsl:template&gt;
+	&lt;xsl:template match="/"&gt;
+		&lt;p&gt;
+			&lt;xsl:apply-templates/&gt;
+		&lt;/p&gt;
+	&lt;/xsl:template&gt;
 
-&lt;xsl:template match="note"&gt;
-	&lt;i&gt;
-		&lt;xsl:apply-templates/&gt;
-	&lt;/i&gt;
-&lt;/xsl:template&gt;
+	&lt;xsl:template match="note"&gt;
+		&lt;i&gt;
+			&lt;xsl:apply-templates/&gt;
+		&lt;/i&gt;
+	&lt;/xsl:template&gt;
 
-&lt;/xsl:stylesheet&gt;
+	&lt;/xsl:stylesheet&gt;
 </code>
 </pre>
-
-<!--<img src="Example1-improved.png" title="Example 1" width="600" height="400"/>-->
 
 <h3 id="javascript-jquery">jQuery $.ajax</h3>
 
 <p>You can load XSLT and XML files using the <a href="https://jquery.com/" title="jQuery">jQuery</a> <code>$.ajax</code> functionality and then use <code>XSLTProcessor()</code> to apply the transformation.</a></p>
+
 <p>Again, as <code>$.ajax</code> requires Ajax (i.e <code>XMLHttpRequest()</code>) a local webserver is required and for you to have jQuery loaded. I have used jQuery jquery-3.6.0 here, check what version you have available - bear in mind that there are differences between versions of jQuery.</p>
 
 <h4>Example 2 - jQuery ($.ajax) and XSLTProcessor</h4>
@@ -310,39 +321,38 @@ xmlRequest.send(null);
 
 $(function(){
 
-if (!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}else{
-	console.log('XSLTProcessor available.');
-}
+	if (!('XSLTProcessor' in window)) {
+		  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+		  return;
+	}else{
+		console.log('XSLTProcessor available.');
+	}
 
+	const xsltProcessor = new XSLTProcessor();
 
-const xsltProcessor = new XSLTProcessor();
+	//XSLT file
 
-//XSLT file
+	$.ajax({
+		type: "GET",
+		url: "data/example.xsl",
+		dataType: "xml",
+		success: function (xsl) {
+			xsltProcessor.importStylesheet(xsl);
+		}
+	});
 
-$.ajax({
-    type: "GET",
-    url: "data/example.xsl",
-    dataType: "xml",
-    success: function (xsl) {
-	    xsltProcessor.importStylesheet(xsl);
-    }
-});
+	//XML file
 
-//XML file
+	$.ajax({
+		type: "GET",
+		url: "data/example.xml",
+		dataType: "xml",
+		success: function (xml) {
+		 const fragment = xsltProcessor.transformToFragment(xml, document);
+		 $("#example").append(fragment);
+		}
 
-$.ajax({
-    type: "GET",
-    url: "data/example.xml",
-    dataType: "xml",
-    success: function (xml) {
-	 const fragment = xsltProcessor.transformToFragment(xml, document);
-	 $("#example").append(fragment);
-    }
-
-});
+	});
 
 });
 
@@ -373,43 +383,43 @@ $.ajax({
 
 $(function() {
 
-if (!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}else{
-	console.log('XSLTProcessor available.');
-}
+	if (!('XSLTProcessor' in window)) {
+		  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+		  return;
+	}else{
+		console.log('XSLTProcessor available.');
+	}
 
-const xsltProcessor = new XSLTProcessor();
+	const xsltProcessor = new XSLTProcessor();
 
-//XSLT file
+	//XSLT file
 
-$.ajax({
-    type: "GET",
-    url: "data/example.xsl",
-    dataType: "xml"
-}).done(function(data){
-    xsltProcessor.importStylesheet(data);
-}).fail(function(error){
-    console.log("Error: " + error.status + " " + error.statusText);
-}).always(function(){
-    console.log("complete");
-});
+	$.ajax({
+		type: "GET",
+		url: "data/example.xsl",
+		dataType: "xml"
+	}).done(function(data){
+		xsltProcessor.importStylesheet(data);
+	}).fail(function(error){
+		console.log("Error: " + error.status + " " + error.statusText);
+	}).always(function(){
+		console.log("complete");
+	});
 
-//XML file
+	//XML file
 
-$.ajax({
-    type: "GET",
-    url: "data/example.xml",
-    dataType: "xml"
-}).done(function(data){
-    const fragment = xsltProcessor.transformToFragment(data, document);
-    $("#example").append(fragment);
-}).fail(function(error){
-    console.log("Error: " + error.status + " " + error.statusText);
-}).always(function(){
-    console.log("complete");
-});
+	$.ajax({
+		type: "GET",
+		url: "data/example.xml",
+		dataType: "xml"
+	}).done(function(data){
+		const fragment = xsltProcessor.transformToFragment(data, document);
+		$("#example").append(fragment);
+	}).fail(function(error){
+		console.log("Error: " + error.status + " " + error.statusText);
+	}).always(function(){
+		console.log("complete");
+	});
 
 });
 
@@ -438,25 +448,25 @@ $.ajax({
 
 $(function(){
 
-if (!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}else{
-	console.log('XSLTProcessor available.');
-}
+	if (!('XSLTProcessor' in window)) {
+		  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+		  return;
+	}else{
+		console.log('XSLTProcessor available.');
+	}
 
-const xsltProcessor = new XSLTProcessor();
+	const xsltProcessor = new XSLTProcessor();
 
-//XSLT file
-$.get("data/example.xsl", function(xsl) {
-    xsltProcessor.importStylesheet(xsl);
-});
+	//XSLT file
+	$.get("data/example.xsl", function(xsl) {
+		xsltProcessor.importStylesheet(xsl);
+	});
 
-//XML file
-$.get("data/example.xml", function(xml) {
-    const fragment = xsltProcessor.transformToFragment(xml, document);
-    $("#example").append(fragment);
-});
+	//XML file
+	$.get("data/example.xml", function(xml) {
+		const fragment = xsltProcessor.transformToFragment(xml, document);
+		$("#example").append(fragment);
+	});
 
 });
 
@@ -492,58 +502,58 @@ As the fetch() API is built into the browser its already available, where suppor
 
 (function(){
 	
-function fetchLoad(){
-	
-if(!('fetch' in window)) {
-	  console.log('Fetch does not appear to be available in this browser. Please try another.');
-	  return;
-}
+	function fetchLoad(){
+		
+		if(!('fetch' in window)) {
+			  console.log('Fetch does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('XSLTProcessor' in window)) {
+			  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('DOMParser' in window)){
-	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('DOMParser' in window)){
+			  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-const xsltProcessor = new XSLTProcessor();
-const parser = new DOMParser();
+		const xsltProcessor = new XSLTProcessor();
+		const parser = new DOMParser();
 
-//XSLT stylesheet
+		//XSLT stylesheet
 
-fetch('data/example.xsl').then(function(response){
-  // Do stuff with the response
-  if(response){
-  	return response.text();
-  }
-}).then(function(data) {
-       const xsl = parser.parseFromString(data, "application/xml");
-       xsltProcessor.importStylesheet(xsl);
-})
-.catch(function(error) {
-  console.log('Looks like there was a problem: ', error);
-});
+		fetch('data/example.xsl').then(function(response){
+		  // Do stuff with the response
+		  if(response){
+			return response.text();
+		  }
+		}).then(function(data) {
+			   const xsl = parser.parseFromString(data, "application/xml");
+			   xsltProcessor.importStylesheet(xsl);
+		})
+		.catch(function(error) {
+		  console.log('Looks like there was a problem: ', error);
+		});
 
-//XML file
+		//XML file
 
-fetch('data/example.xml').then(function(response){
-  // Do stuff with the response
-  if(response){
-  	return response.text();
-  }
-}).then(function(data) {
-       const xml = parser.parseFromString(data, "application/xml");
-       const fragment = xsltProcessor.transformToFragment(xml, document);
-       document.getElementById("example").appendChild(fragment);
-})
-.catch(function(error) {
-  console.log('Looks like there was a problem: ', error);
-});
+		fetch('data/example.xml').then(function(response){
+		  // Do stuff with the response
+		  if(response){
+			return response.text();
+		  }
+		}).then(function(data) {
+			   const xml = parser.parseFromString(data, "application/xml");
+			   const fragment = xsltProcessor.transformToFragment(xml, document);
+			   document.getElementById("example").appendChild(fragment);
+		})
+		.catch(function(error) {
+		  console.log('Looks like there was a problem: ', error);
+		});
 
-}
+	}
 
 window.addEventListener("load", fetchLoad, false);
 })();
@@ -590,49 +600,49 @@ myfunction();
 
 (function(){
 
-function fetchLoad(){
+	function fetchLoad(){
 
-if(!('fetch' in window)) {
-	  console.log('Fetch does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('fetch' in window)) {
+			  console.log('Fetch does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('XSLTProcessor' in window)) {
+			  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('DOMParser' in window)){
-	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('DOMParser' in window)){
+			  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-const xsltProcessor = new XSLTProcessor();
-const parser = new DOMParser();
+		const xsltProcessor = new XSLTProcessor();
+		const parser = new DOMParser();
 
-loadFile("data/example.xsl").then(data => {
-	//this needs to be let
-	const xsl = parser.parseFromString(data, "application/xml");
-    xsltProcessor.importStylesheet(xsl);
-});
+		loadFile("data/example.xsl").then(data => {
+			//this needs to be let
+			const xsl = parser.parseFromString(data, "application/xml");
+				xsltProcessor.importStylesheet(xsl);
+		});
 
-loadFile("data/example.xml").then(data => {
-	const xml = parser.parseFromString(data, "application/xml");
-    const fragment = xsltProcessor.transformToFragment(xml, document);
-    document.getElementById("example").appendChild(fragment);
-});
+		loadFile("data/example.xml").then(data => {
+			const xml = parser.parseFromString(data, "application/xml");
+				const fragment = xsltProcessor.transformToFragment(xml, document);
+				document.getElementById("example").appendChild(fragment);
+		});
 
-}
-
-async function loadFile(filepath){
-	
-	const response = await fetch(filepath);
-	if(!response.ok){
-		console.log('Looks like there was a problem: ', response.status);
 	}
-	const text = await response.text();
-	return text;
-}
+
+	async function loadFile(filepath){
+		
+		const response = await fetch(filepath);
+		if(!response.ok){
+			console.log('Looks like there was a problem: ', response.status);
+		}
+		const text = await response.text();
+		return text;
+	}
 
 window.addEventListener("load", fetchLoad, false);
 })();
@@ -643,7 +653,7 @@ window.addEventListener("load", fetchLoad, false);
 </code>
 </pre>
 
-<p>In our examples we need the XSLT file loaded before the XML file. Javascript Promises() provide a <code>.then()</code> method we can use to call javascript is in a sequential order we need.</p>
+<p>In our examples we need the XSLT file loaded before the XML file. Javascript Promises() provide a <code>.then()</code> method we can use to call javascript in a sequential order we need.</p>
 
 <h4>Example 7 - fetch() API with await and async, using .then()</h4>
 
@@ -663,47 +673,47 @@ window.addEventListener("load", fetchLoad, false);
 		
 (function(){
 
-function fetchLoad(){
+	function fetchLoad(){
 
-if(!('fetch' in window)) {
-	  console.log('Fetch does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('fetch' in window)) {
+			  console.log('Fetch does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('XSLTProcessor' in window)) {
-	  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('XSLTProcessor' in window)) {
+			  console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-if(!('DOMParser' in window)){
-	  console.log('DOMParser does not appear to be available in this browser. Please try another.');
-	  return;
-}
+		if(!('DOMParser' in window)){
+			  console.log('DOMParser does not appear to be available in this browser. Please try another.');
+			  return;
+		}
 
-const xsltProcessor = new XSLTProcessor();
-const parser = new DOMParser();
+		const xsltProcessor = new XSLTProcessor();
+		const parser = new DOMParser();
 
-loadFile("data/example.xsl").then(data => {
-	//this needs to be let
-	const xsl = parser.parseFromString(data, "application/xml");
-    xsltProcessor.importStylesheet(xsl);
-}).then(loadFile("data/example.xml").then(data => {
-	const xml = parser.parseFromString(data, "application/xml");
-    const fragment = xsltProcessor.transformToFragment(xml, document);
-    document.getElementById("example").appendChild(fragment);
-}));
+		loadFile("data/example.xsl").then(data => {
+			//this needs to be let
+			const xsl = parser.parseFromString(data, "application/xml");
+				xsltProcessor.importStylesheet(xsl);
+		}).then(loadFile("data/example.xml").then(data => {
+			const xml = parser.parseFromString(data, "application/xml");
+				const fragment = xsltProcessor.transformToFragment(xml, document);
+				document.getElementById("example").appendChild(fragment);
+		}));
 
-}
-
-async function loadFile(filepath){
-	
-	const response = await fetch(filepath);
-	if(!response.ok){
-		console.log('Looks like there was a problem: ', response.status);
 	}
-	const text = await response.text();
-	return text;
-}
+
+	async function loadFile(filepath){
+		
+		const response = await fetch(filepath);
+		if(!response.ok){
+			console.log('Looks like there was a problem: ', response.status);
+		}
+		const text = await response.text();
+		return text;
+	}
 
 window.addEventListener("load", fetchLoad, false);
 })();
@@ -748,7 +758,9 @@ pieces of XML incorporated within the HTML of the webpage. This was at a time be
 </pre>
 
 <p>Including XML within HTML is <a href="https://www.w3.org/2010/html-xml/snapshot/report.html#uc04" 
-title="W3C - HTML/XML Task Force Report">tricky</a></p>
+title="W3C - HTML/XML Task Force Report">tricky!</a></p>
+
+<p>The following examples are not recommended - nor are they expected to work!</p>
 
 <h4>Example 8 - XML and XSLT within HTML (not a recommended approach!)</h4>
 
@@ -803,62 +815,67 @@ What is the point of having the data scource embedded within a file you won't li
 
 (function(){
 
-function documentLoaded(){
+	function documentLoaded(){
 
-if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
-	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	return;
-}
-
-let parser = new DOMParser();
-let xsltDoc, xmlDoc = null;
-
-//XSLT stylesheet
-console.log("XSLT stylesheet");
-let xslt = document.getElementById("xslt");
-if(xslt){
+	if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+		console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
+		return;
+	}
 	
-	//convert to XSLT to string
-	const s = new XMLSerializer();
- 	const d = xslt.firstElementChild;
-	let str = null;
-	try{
- 		str = s.serializeToString(d);
-		console.log(str);
-	}catch(error){
-		//we can check here for instances of particular errors
-		console.log(error);
+	if(!('XMLSerializer' in window)) {
+		console.log('XMLSerializer does not appear to be available in this browser. Please try another.');
+		return;
 	}
-	 	
-	//now convert that string into XMLDocument
+
 	let parser = new DOMParser();
-	xsltDoc = parser.parseFromString(str, "application/xml");
-	const errorNode = xsltDoc.querySelector('parsererror');
-	if (errorNode) {
-  		console.log(errorNode);
-	} else {
-  		console.log("parsing successful");
+	let xsltDoc, xmlDoc = null;
+
+	//XSLT stylesheet
+	let xslt = document.getElementById("xslt");
+	if(xslt){
+		
+		//convert to XSLT to string
+		const s = new XMLSerializer();
+		const d = xslt.firstElementChild;
+		
+		let str = null;
+		try{
+			str = s.serializeToString(d);
+			console.log(str);
+		}catch(error){
+			//we can check here for instances of particular errors
+			console.log(error);
+		}
+			
+		//now convert that string into XMLDocument
+		let parser = new DOMParser();
+		xsltDoc = parser.parseFromString(str, "application/xml");
+		const errorNode = xsltDoc.querySelector('parsererror');
+		if (errorNode) {
+			console.log(errorNode);
+		} else {
+			console.log("parsing successful");
+		}
 	}
-}
 
-//XML
-console.log("XML document");
-let xml = document.getElementById("xml");
-if(xml){
-	xmlDoc = document.implementation.createDocument(null, "", null);
-	xmlDoc.appendChild(xml);
-}
+	//XML
+	console.log("XML document");
+	let xml = document.getElementById("xml");
+	if(xml){
+		xmlDoc = document.implementation.createDocument(null, "", null);
+		xmlDoc.appendChild(xml);
+	}
 
-//XSLT Processors and import XSLT
-let xsltProcessor = new XSLTProcessor();
-xsltProcessor.importStylesheet(xsltDoc);
+	//XSLT Processors and import XSLT
+	let xsltProcessor = new XSLTProcessor();
+	xsltProcessor.importStylesheet(xsltDoc);
 
-//now we can run the transformation and save to fragment
-let fragment = xsltProcessor.transformToFragment(xmlDoc, document);
+	//now we can run the transformation and save to fragment
+	let fragment = xsltProcessor.transformToFragment(xmlDoc, document);
 
-//now show append the transformation to the &lt;div id="example"&gt; to present
-document.getElementById("example").appendChild(fragment);
-}
+	//now show append the transformation to the &lt;div id="example"&gt; to present
+	document.getElementById("example").appendChild(fragment);
+	}
 
 window.addEventListener("load", documentLoaded, false);
 })();
@@ -868,18 +885,6 @@ window.addEventListener("load", documentLoaded, false);
 &lt;/html&gt;
 </code>
 </pre>
-
-<h4>Example 7 - XML and XSLT within HTML using <code>&lt;script&gt;</code> (a better approach!)</h4>
-
-<p></p>
-
-
-<pre>
-<code>
-
-</code>
-</pre>
-
 
 <h3>What about using <code>&lt;iframe&gt;</code> or <code>&lt;object&gt;</code> to load XML and XSLT?</h3>
 
@@ -934,13 +939,9 @@ function documentLoaded(){
 		console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
 		return;
 	}
-	serializeFromElement("xslt-iframe");
-}
-
-function serializeFromElement(value){
 	
 	//get the iframe
-	let xslt = document.getElementById(value);
+	let xslt = document.getElementById("xslt-iframe");
 	
 	//get the output location
 	const output = document.getElementById("output");
@@ -961,6 +962,7 @@ function serializeFromElement(value){
 
 window.addEventListener("load", documentLoaded, false);
 }) ();
+
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -1000,15 +1002,9 @@ function documentLoaded(){
 	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
 	return;
 	}
-
-	//object
-	serializeFromElement("xslt-object");
-}
-
-function serializeFromElement(value){
 	
 	//get the object
-	const xsltobject = document.getElementById(value);
+	const xsltobject = document.getElementById("xslt-object");
 	
 	//get the output location
 	const output = document.getElementById("output");
@@ -1025,10 +1021,10 @@ function serializeFromElement(value){
 	}catch(error){
 		console.log(error);
 	}
-}
 
 window.addEventListener("load", documentLoaded, false);
 }) ();
+
 &lt;/script&gt;
 &lt;/body&gt;
 &lt;/html&gt;
@@ -1039,7 +1035,9 @@ window.addEventListener("load", documentLoaded, false);
 <p><code>embed</code> often serves a similar purpose as <code>iframe</code> and <code>object</code> however this does not load XML according to my experimentation.</p>
 
 <h3>Using a &lt;textarea&gt;</code></h3>
-<p>A <code>&lt;textarea&gt;</code> can be used to accept XSLT and XML content. This would be more suitable for webpages that provide a tool-style use rather than presentating the transformed content. Any real-world example should of course check the value of the <code>&lt;textarea&gt;</code> for malicious content.</p>
+<p>A <code>&lt;textarea&gt;</code> can be used to accept XSLT and XML content.</p>
+
+<p>This would be more suitable for webpages that provide a tool-style use rather than presentating the transformed content. Any real-world example should of course check the value of the <code>&lt;textarea&gt;</code> for malicious content.</p>
 <p>The value of the <code>&lt;textarea&gt;</code>  are read and then <code>DOMParser</code> is used to convent the text content into a XMLDocument object. This object can then be passed to <code>XSLTProcessor</code>.</p>
 
 <h4>Example 9 - <code>&lt;textarea&gt;</code></h4>
@@ -1076,18 +1074,17 @@ Paste XML
 
 function documentLoaded(){
 
-if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
-	console.log('XSLTProcessor, DOMParser and XMLSerializer do not appear to be available in this browser. Please try another.');
-	return;
-}
+	if(!('XSLTProcessor' in window && 'DOMParser' in window && 'XMLSerializer' in window)){
+		console.log('XSLTProcessor, DOMParser and XMLSerializer do not appear to be available in this browser. Please try another.');
+		return;
+	}
 
-const xsltProcessor = new XSLTProcessor();
-const parser = new DOMParser();
-const serializer = new XMLSerializer();
+	const xsltProcessor = new XSLTProcessor();
+	const parser = new DOMParser();
+	const serializer = new XMLSerializer();
 
-
-const button = document.getElementById("transform");
-button.addEventListener("click", function(){
+	const button = document.getElementById("transform");
+	button.addEventListener("click", function(){
 	
 	const xslttextarea = document.getElementById("xslt-textarea");
 	xsltstr = xslttextarea.value;
@@ -1171,75 +1168,75 @@ window.addEventListener("load", documentLoaded, false);
 	
 function documentLoaded(){
 	
-if(!('XSLTProcessor' in window && 'DOMParser' in window)){
-	console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
-	return;
-}
-
-const xsltProcessor = new XSLTProcessor();
-const parser = new DOMParser();
-
-//output
-const output = document.getElementById("output");
-	
-//handle xsltfile
-
-const xsltfile = document.getElementById("xsltfileload");
-xsltfile.addEventListener("change", function(){
-		
-	const file = this.files[0];
-		
-	if(file.type !== "application/xslt+xml"){
-		console.log("file is not an XSLT file");
+	if(!('XSLTProcessor' in window && 'DOMParser' in window)){
+		console.log('XSLTProcessor does not appear to be available in this browser. Please try another.');
 		return;
 	}
-		
-	const reader = new FileReader();
-	reader.readAsText(file);
-		
-	//load
-	reader.addEventListener("load", function(){
-		let xsl = parser.parseFromString(reader.result, "application/xml");
-		xsltProcessor.importStylesheet(xsl);	
-	}, false);
-		
-	//error
-	reader.addEventListener("error", function(){
-		console.log("error");
-	}, false);
-		
-}, false);
 
-//handle xmlfile
+	const xsltProcessor = new XSLTProcessor();
+	const parser = new DOMParser();
 
-const xmlfile = document.getElementById("xmlfileload");
-xmlfile.addEventListener("change", function(){
-	
-	const file = this.files[0];
+	//output
+	const output = document.getElementById("output");
 		
-	if(file.type !== "text/xml"){
-		console.log("file is not an XML file");
-		return;
+	//handle xsltfile
+
+	const xsltfile = document.getElementById("xsltfileload");
+	xsltfile.addEventListener("change", function(){
+			
+		const file = this.files[0];
+			
+		if(file.type !== "application/xslt+xml"){
+			console.log("file is not an XSLT file");
+			return;
+		}
+			
+		const reader = new FileReader();
+		reader.readAsText(file);
+			
+		//load
+		reader.addEventListener("load", function(){
+			let xsl = parser.parseFromString(reader.result, "application/xml");
+			xsltProcessor.importStylesheet(xsl);	
+		}, false);
+			
+		//error
+		reader.addEventListener("error", function(){
+			console.log("error");
+		}, false);
+			
+	}, false);
+
+	//handle xmlfile
+
+	const xmlfile = document.getElementById("xmlfileload");
+	xmlfile.addEventListener("change", function(){
+		
+		const file = this.files[0];
+			
+		if(file.type !== "text/xml"){
+			console.log("file is not an XML file");
+			return;
+		}
+			
+		const reader = new FileReader();
+		reader.readAsText(file);
+			
+		//load
+		reader.addEventListener("load", function(){
+			const xml = parser.parseFromString(reader.result, "application/xml");
+			const fragment = xsltProcessor.transformToFragment(xml, document);
+			output.appendChild(fragment);
+		}, false);
+			
+		//error
+		reader.addEventListener("error", function(){
+			console.log("error");
+		}, false);
+		
+	}, false);
+
 	}
-		
-	const reader = new FileReader();
-	reader.readAsText(file);
-		
-	//load
-	reader.addEventListener("load", function(){
-		const xml = parser.parseFromString(reader.result, "application/xml");
-		const fragment = xsltProcessor.transformToFragment(xml, document);
-		output.appendChild(fragment);
-	}, false);
-		
-	//error
-	reader.addEventListener("error", function(){
-		console.log("error");
-	}, false);
-	
-}, false);
-
-}
 
 window.addEventListener("load", documentLoaded, false);
 }) ();
