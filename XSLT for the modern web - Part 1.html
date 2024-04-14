@@ -127,7 +127,7 @@ Having gotten it, &lt;name type="pers"&gt;Gyges&lt;/name&gt; sent many offerings
 
 <p>Note that while Microsoft Edge is based on Chromium, this does not mean these examples should be assumed to work in Edge. As Internet Explorer is no longer supported I have not tested, and this explains why none of the Javascript examples refer to using <code>ActiveXObject</code> as a method to load XML files. (you will encounter <code>ActiveXObject</code> on other, older articles)</p>
 
-<h2 id="localwebserver">Running XSLT in-browser via local webserver - e.g. Apache Web Server</h2>
+<h2 id="localwebserver">Running XSLT in-browser via local webserver</h2>
 
 <p>Serving a XML associated with a XSLT stylesheet in a local web service is a very easy way to apply an XSLT transformation if you just want to see the output in a browser. You'll need to ensure your XML file is associated with the XSLT file, by including this declaration in your XML file.</p>
 
@@ -137,11 +137,12 @@ Having gotten it, &lt;name type="pers"&gt;Gyges&lt;/name&gt; sent many offerings
 </code>
 </pre>
 
-<p>To apply the transformation you open the XML file in the browser and the transformation should be visible. The files should be in the part of filesystem that is accessible, in Linux systems I have found this is usually <code>/var/www/html/</code>. If your XML and XSLT were stored in <code>/var/www/html/data/</code>, you would just enter <code>localhost/data/example.xml</code> and the transformation will be visible.</p>
+<p>To apply the transformation you open the XML file in the browser and the transformation should be visible. The files should be in the part of filesystem that is accessible, in Linux systems this is usually <code>/var/www/html/</code>. If your XML and XSLT were stored in <code>/var/www/html/data/</code>, you would just enter <code>localhost/data/example.xml</code> and the transformation will be visible.</p>
 
 <p>Note, on Linux systems, if the transformation is not applied you may have to check the file permissions. Using the terminal you can use <code>chgrp</code> and <code>chmod</code> however you need to provide the right permissions.</p>
 
 <pre>
+<code>
 sudo chgrp [group] example.xml
 sudo chmod 666 example.xml
 </code>
@@ -161,6 +162,8 @@ sudo chgrp [group] ./data -R
 
 <p>Note however it used to be possible to use a file from the local file system - so you may see references to this on older webpages. There are ways to get around this by adjusting browser settings but this is not recommended from a security perspective - you forget to turn these settings back on and open yourselves to a vulnerablity when using the browser.</p>
 
+<h3>Apache web server</h3>
+
 <p>On linux, if you haven't already got a web server, downloading Apache2 is as easy as:</p>
 
 <pre>
@@ -172,6 +175,26 @@ sudo apt-get install apache2
 <p>In your web-broswer, if you view source of the transformation you'll see the XML file without the XSLT transformation applied. The browser won't show the transformation in view-source, but if you open up the browsers interactive development tools you will see the transformation and be able to navigate through this. Alternatively, in Firefox you can select the text output in the browser, right click and select "View Selection Source".</p>
 
 <p>What you might find with using this method to apply transformations is that the XSLT file may be cached and if you make changes to the XSLT file they are not applied. In Firefox developer tools there is a option within the browser to disable cache which is useful to see. Firefox developer tools will also show you which files are cached as not all files are, you can apply the option selectively.</p>
+
+<h3>PHP web server</h3>
+
+<p>An alternative for easy use, but not for public facing websites, is to use the built in PHP web server. If you already have PHP installed, this can be additionally downloaded using the PHP command line interface.</p>
+
+<pre>
+<code>
+sudo apt install php8.1-cli
+</code>
+</pre>
+
+<p>Once installed, using this webserver is as simple as setting the below in the terminal:</p>
+
+<pre>
+<code>
+php -S localhost:8000
+</code>
+</pre>
+
+<p>Entering <code>localhost:8000/</code> in your web browser should then serve the files within <code>/var/www/html</code></p>
 
 <h2 id="javascript">Running XSLT using Javascript - XSLTProcessor()</h2>
 
