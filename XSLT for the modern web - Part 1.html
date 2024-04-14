@@ -196,6 +196,14 @@ php -S localhost:8000
 
 <p>Entering <code>localhost:8000/</code> in your web browser should then serve the files within <code>/var/www/html</code></p>
 
+<p>To load a specific folder on web server startup, append the terminal instruction like so:</p>
+
+<pre>
+<code>
+php -S localhost:8000 -t "1. simple lookup"/
+</code>
+</pre>
+
 <h2 id="javascript">Running XSLT using Javascript - XSLTProcessor()</h2>
 
 <p>You can use the XSLT Processor API to apply XSLT transformations in the browser.</p>
