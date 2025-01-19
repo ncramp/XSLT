@@ -1,5 +1,5 @@
 # XSLT
-This was initially a repository for a long-read text on how to use basic XSLT with Javascript and PHP in a website context in 2023.
+This was initially a repository for a long-read text on how to use basic XSLT with Javascript and PHP in a website context in 2023, however the intention is for this to migrate into a repository of examples instead.
 
 # Scope
 There are many tutorials available on how to use XSLT and XPath on the web but many of these are dated and from the Internet Explorer era.
